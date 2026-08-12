@@ -4,7 +4,19 @@
 
 ---
 
-## ✨ Features
+## 📸 Screenshots
+
+### 💻 Desktop Editor & Real-Time A4 Live Preview
+![RésuméForge Desktop Preview](assets/desktop-preview.png)
+
+---
+
+### 📱 Mobile View & Responsive Layout Switcher
+![RésuméForge Mobile Preview](assets/mobile-preview.png)
+
+---
+
+## ✨ Key Features
 
 - **📄 4 Editorial A4 Print Layouts**:
   - **Modern (◈)**: Dual-column terracotta & ink design.
@@ -24,7 +36,7 @@
 - **⚡ Instant Demo Data Loader**:
   - 1-click sample data loading to instantly preview all fields and templates.
 - **🌗 Theme Toggle**:
-  - Sleek dark and light glassmorphism interface.
+  - Sleek dark and light glassmorphic interface.
 
 ---
 
@@ -38,14 +50,14 @@
 
 ## 🚀 Getting Started
 
-Simply open `index.html` in any modern web browser or serve locally:
+Simply clone the repository and open `index.html` in any web browser:
 
 ```bash
 # Clone the repository
-git clone git@github.com:Abhimanyu012/notesapp-react.git
+git clone git@github.com:Abhimanyu012/build_resume.git
 
 # Navigate into project directory
-cd notesapp-react
+cd build_resume
 
 # Open index.html directly or serve using local server
 npx serve .
