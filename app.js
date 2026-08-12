@@ -599,6 +599,34 @@
     }
   });
 
+  function resetForm() {
+    const emptyState = {
+      template: state.template,
+      zoom: state.zoom,
+      mobileView: state.mobileView,
+      personal: {
+        fullName: '',
+        jobTitle: '',
+        email: '',
+        phone: '',
+        location: '',
+        website: '',
+        linkedin: '',
+        github: '',
+        summary: ''
+      },
+      experience: [],
+      education: [],
+      projects: [],
+      certs: [],
+      skills: [],
+      languages: '',
+      interests: ''
+    };
+    applyDataToForm(emptyState);
+    showToast('Form reset to blank.', 'success');
+  }
+
   function applyDataToForm(data) {
     Object.assign(state, JSON.parse(JSON.stringify(data)));
 
@@ -632,6 +660,12 @@
     });
   }
 
+  // Reset Form button listener
+  const resetBtn = $('#resetBtn');
+  if (resetBtn) {
+    resetBtn.addEventListener('click', resetForm);
+  }
+
   // ── Export PDF ──
   $('#exportBtn').addEventListener('click', () => {
     const prevZoom = state.zoom;
@@ -661,11 +695,15 @@
   // ── Toast ──
   function showToast(msg, type = 'success') {
     const wrap = $('#toastWrap');
+    if (!wrap) return;
     const toast = document.createElement('div');
     toast.className = `toast ${type}`;
     toast.textContent = msg;
     wrap.appendChild(toast);
-    setTimeout(() => { toast.classList.add('toast-out'); setTimeout(() => toast.remove(), 300); }, 3000);
+    setTimeout(() => {
+      toast.classList.add('toast-out');
+      setTimeout(() => toast.remove(), 300);
+    }, 3000);
   }
 
   // ── Persistence ──

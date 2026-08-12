@@ -283,14 +283,19 @@ input,textarea,select{font-family:inherit;color:inherit}
 .resume-paper .r-entry-desc{font-size:9px;color:#1a1a1a;line-height:1.45}
 .resume-paper .r-summary{font-size:9.5px;color:#1a1a1a;line-height:1.5;font-weight:400;margin-bottom:0}
 .resume-paper .r-skills-grid{display:flex;flex-wrap:wrap;gap:5px;margin-top:2px}
-.resume-paper .r-skill-chip{display:inline-flex;align-items:center;padding:3.5px 8.5px;background:#f1f5f9;border-radius:4px;font-size:9.5px;font-weight:600;line-height:1.2;letter-spacing:0.2px;color:#1e293b;border:1px solid #cbd5e1;transition:all 0.2s}
-.resume-paper .r-skill-chip.lvl-expert{background:#0f172a;color:#ffffff;border-color:#0f172a}
-.resume-paper .r-skill-chip.lvl-advanced{background:#a15822;color:#ffffff;border-color:#a15822}
-.resume-paper .r-skill-chip.lvl-intermediate{background:#f8fafc;color:#1e293b;border-color:#94a3b8}
-.resume-paper .r-skill-chip.lvl-beginner{background:#ffffff;color:#475569;border-color:#cbd5e1}
+.resume-paper .r-skill-chip{display:inline-flex;align-items:center;padding:4px 9px;background:#a15822;color:#ffffff;border-radius:4px;font-size:9.5px;font-weight:600;line-height:1.2;letter-spacing:0.2px;border:1px solid #a15822;transition:all 0.2s}
 
-.resume-paper[data-template="modern"] .r-skill-chip.lvl-expert{background:#a15822;color:#ffffff;border-color:#a15822}
-.resume-paper[data-template="modern"] .r-skill-chip.lvl-advanced{background:#bd733b;color:#ffffff;border-color:#bd733b}
+.resume-paper[data-template="classic"] .r-skill-chip{
+  background: #0f172a;
+  color: #ffffff;
+  border-color: #0f172a;
+}
+
+.resume-paper[data-template="minimal"] .r-skill-chip{
+  background: #f1f5f9;
+  color: #0f172a;
+  border-color: #cbd5e1;
+}
 .resume-paper .r-lang-item{font-size:9px;color:#1a1a1a;font-weight:500;margin-bottom:2px}
 .resume-paper .r-interest{font-size:9px;color:#1a1a1a;line-height:1.4;font-weight:450}
 
@@ -341,6 +346,23 @@ input,textarea,select{font-family:inherit;color:inherit}
 @keyframes toastIn{from{opacity:0;transform:translateY(16px) scale(.95)}to{opacity:1;transform:translateY(0) scale(1)}}
 .toast-out{animation:toastOut .3s ease forwards}
 @keyframes toastOut{to{opacity:0;transform:translateY(8px) scale(.95)}}
+.toast-action-btn {
+  margin-left: 8px;
+  padding: 4px 10px;
+  background: var(--accent);
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+.toast-action-btn:hover {
+  background: #bd733b;
+  transform: scale(1.04);
+}
 
 /* ═══ PRINT EXPORT ═══ */
 @page {
