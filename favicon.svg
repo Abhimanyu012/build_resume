@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <rect width="64" height="64" rx="16" fill="#0F172A"/>
+  <!-- Hexagon logo outline -->
+  <polygon points="32,9 51,20 51,44 32,55 13,44 13,20" fill="none" stroke="#A15822" stroke-width="4" stroke-linejoin="round"/>
+  <!-- Document / Resume emblem -->
+  <path d="M24 20C24 18.8954 24.8954 18 26 18H35L42 25V44C42 45.1046 41.1046 46 40 46H26C24.8954 46 24 45.1046 24 44V20Z" fill="#A15822"/>
+  <path d="M35 18V25H42" fill="none" stroke="#F8FAFC" stroke-width="2" stroke-linejoin="round"/>
+  <line x1="28" y1="31" x2="38" y2="31" stroke="#F8FAFC" stroke-width="2" stroke-linecap="round"/>
+  <line x1="28" y1="36" x2="35" y2="36" stroke="#F8FAFC" stroke-width="2" stroke-linecap="round"/>
+  <line x1="28" y1="41" x2="37" y2="41" stroke="#F8FAFC" stroke-width="2" stroke-linecap="round"/>
+</svg>
