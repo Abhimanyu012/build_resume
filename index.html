@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Résumé Forge — Build Your Story</title>
+  <meta name="description" content="Craft stunning, ATS-optimized resumes with live preview, multiple templates, and export to PDF. Free, no sign-up required." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Lora:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ░░ AMBIENT BACKGROUND ░░ -->
+  <div class="ambient-bg">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="grid-overlay"></div>
+  </div>
+
+  <!-- ░░ NAV ░░ -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-inner">
+      <a href="#" class="nav-brand">
+        <span class="brand-icon">⬡</span>
+        <span class="brand-text">Résumé<em>Forge</em></span>
+      </a>
+      <div class="nav-actions">
+        <button class="btn-secondary-nav" id="demoBtn" title="Load realistic sample data for all fields">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          <span>Load Demo</span>
+        </button>
+        <button class="btn-ghost" id="themeToggle" title="Toggle theme">
+          <span class="icon-sun">☀</span>
+          <span class="icon-moon">◑</span>
+        </button>
+        <button class="btn-primary" id="exportBtn">
+          <span>Export PDF</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ░░ APP SHELL ░░ -->
+  <main class="app-shell" id="appShell">
+
+    <!-- LEFT PANEL: EDITOR -->
+    <aside class="editor-panel" id="editorPanel">
+
+      <!-- Tab navigation -->
+      <div class="tab-rail">
+        <button class="tab-btn active" data-tab="personal" id="tab-personal">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+          <span>Personal</span>
+        </button>
+        <button class="tab-btn" data-tab="experience" id="tab-experience">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+          <span>Experience</span>
+        </button>
+        <button class="tab-btn" data-tab="education" id="tab-education">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+          <span>Education</span>
+        </button>
+        <button class="tab-btn" data-tab="skills" id="tab-skills">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <span>Skills</span>
+        </button>
+        <button class="tab-btn" data-tab="extras" id="tab-extras">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <span>Extras</span>
+        </button>
+        <div class="tab-ink" id="tabInk"></div>
+      </div>
+
+      <!-- Tab contents -->
+      <div class="tab-content-wrap">
+
+        <!-- PERSONAL -->
+        <section class="tab-content active" id="tab-content-personal">
+          <div class="section-header">
+            <h2 class="section-title">Personal Details</h2>
+            <p class="section-sub">Your identity on paper</p>
+          </div>
+          <div class="form-grid">
+            <div class="form-group full">
+              <label class="form-label" for="fullName">Full Name</label>
+              <input class="form-input" id="fullName" type="text" placeholder="e.g. Alexandra Chen" autocomplete="off" />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="jobTitle">Job Title</label>
+              <input class="form-input" id="jobTitle" type="text" placeholder="e.g. Senior Product Designer" />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="email">Email</label>
+              <input class="form-input" id="email" type="email" placeholder="you@example.com" />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="phone">Phone</label>
+              <input class="form-input" id="phone" type="tel" placeholder="+1 (555) 000-0000" />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="location">Location</label>
+              <input class="form-input" id="location" type="text" placeholder="City, Country" />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="website">Portfolio / Website</label>
+              <input class="form-input" id="website" type="url" placeholder="https://yoursite.com" />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="linkedin">LinkedIn</label>
+              <input class="form-input" id="linkedin" type="text" placeholder="linkedin.com/in/yourname" />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="github">GitHub</label>
+              <input class="form-input" id="github" type="text" placeholder="github.com/yourusername" />
+            </div>
+            <div class="form-group full">
+              <label class="form-label" for="summary">Professional Summary</label>
+              <textarea class="form-input form-textarea" id="summary" rows="4" placeholder="A compelling 3-4 line overview of who you are and what you bring..."></textarea>
+            </div>
+          </div>
+        </section>
+
+        <!-- EXPERIENCE -->
+        <section class="tab-content" id="tab-content-experience">
+          <div class="section-header">
+            <h2 class="section-title">Work Experience</h2>
+            <p class="section-sub">Where you've made an impact</p>
+          </div>
+          <div id="experienceList" class="dynamic-list"></div>
+          <button class="btn-add" id="addExperience">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Add Experience
+          </button>
+        </section>
+
+        <!-- EDUCATION -->
+        <section class="tab-content" id="tab-content-education">
+          <div class="section-header">
+            <h2 class="section-title">Education</h2>
+            <p class="section-sub">Your academic foundation</p>
+          </div>
+          <div id="educationList" class="dynamic-list"></div>
+          <button class="btn-add" id="addEducation">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Add Education
+          </button>
+        </section>
+
+        <!-- SKILLS -->
+        <section class="tab-content" id="tab-content-skills">
+          <div class="section-header">
+            <h2 class="section-title">Skills & Expertise</h2>
+            <p class="section-sub">Highlight your technical skills and proficiency levels</p>
+          </div>
+
+          <div class="skill-input-container">
+            <div class="skill-input-row">
+              <div class="form-group flex-1">
+                <label class="form-label" for="skillInput">Skill Name</label>
+                <input class="form-input" id="skillInput" type="text" placeholder="e.g. React, Figma, Python..." />
+              </div>
+              <div class="skill-level-group">
+                <label class="form-label" for="skillLevel">Proficiency</label>
+                <select class="form-input form-select" id="skillLevel">
+                  <option value="beginner">Beginner</option>
+                  <option value="intermediate" selected>Intermediate</option>
+                  <option value="advanced">Advanced</option>
+                  <option value="expert">Expert</option>
+                </select>
+              </div>
+            </div>
+            <button class="btn-add-skill" id="addSkillBtn" type="button">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              <span>Add Skill Tag</span>
+            </button>
+          </div>
+
+          <div class="skill-tags-header">
+            <span class="form-label">Added Skills</span>
+            <span class="skill-count-badge" id="skillCountBadge">0 skills</span>
+          </div>
+          <div id="skillTags" class="skill-tags"></div>
+
+          <div class="form-group full" style="margin-top:1.5rem">
+            <label class="form-label" for="languages">Languages & Fluency</label>
+            <input class="form-input" id="languages" type="text" placeholder="English (Native), Spanish (B2), French (A1)..." />
+          </div>
+        </section>
+
+        <!-- EXTRAS -->
+        <section class="tab-content" id="tab-content-extras">
+          <div class="section-header">
+            <h2 class="section-title">Projects & More</h2>
+            <p class="section-sub">Certifications, projects, interests</p>
+          </div>
+
+          <div class="collapsible-section">
+            <button class="collapsible-toggle" data-target="projectsBlock">
+              <span>Projects</span>
+              <svg class="chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="collapsible-body open" id="projectsBlock">
+              <div id="projectsList" class="dynamic-list"></div>
+              <button class="btn-add" id="addProject">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Add Project
+              </button>
+            </div>
+          </div>
+
+          <div class="collapsible-section">
+            <button class="collapsible-toggle" data-target="certBlock">
+              <span>Certifications</span>
+              <svg class="chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="collapsible-body" id="certBlock">
+              <div id="certList" class="dynamic-list"></div>
+              <button class="btn-add" id="addCert">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Add Certification
+              </button>
+            </div>
+          </div>
+
+          <div class="collapsible-section">
+            <button class="collapsible-toggle" data-target="interestBlock">
+              <span>Interests & Hobbies</span>
+              <svg class="chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="collapsible-body" id="interestBlock">
+              <textarea class="form-input form-textarea" id="interests" rows="3" placeholder="e.g. Open source contribution, rock climbing, photography..."></textarea>
+            </div>
+          </div>
+        </section>
+
+      </div><!-- /tab-content-wrap -->
+
+      <!-- Template Switcher -->
+      <div class="template-rail">
+        <span class="template-label">Layout</span>
+        <button class="tpl-btn active" data-template="modern" title="Modern">◈</button>
+        <button class="tpl-btn" data-template="classic" title="Classic">▤</button>
+        <button class="tpl-btn" data-template="compact" title="Compact">▦</button>
+        <button class="tpl-btn" data-template="minimal" title="Minimal">◻</button>
+      </div>
+
+    </aside><!-- /editor-panel -->
+
+    <!-- DIVIDER HANDLE -->
+    <div class="panel-divider" id="panelDivider">
+      <div class="divider-grip">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+
+    <!-- RIGHT PANEL: LIVE PREVIEW -->
+    <section class="preview-panel" id="previewPanel">
+      <div class="preview-toolbar">
+        <span class="preview-label">Live Preview</span>
+        <div class="zoom-controls">
+          <button class="zoom-btn" id="zoomOut" title="Zoom out">−</button>
+          <span class="zoom-val" id="zoomVal">100%</span>
+          <button class="zoom-btn" id="zoomIn" title="Zoom in">+</button>
+        </div>
+      </div>
+      <div class="preview-viewport" id="previewViewport">
+        <div class="resume-paper" id="resumePaper">
+          <!-- Resume content rendered by JS -->
+        </div>
+      </div>
+    </section>
+
+  </main><!-- /app-shell -->
+
+  <!-- ░░ TOAST ░░ -->
+  <div class="toast-wrap" id="toastWrap"></div>
+
+  <!-- ░░ MOBILE VIEW SWITCHER ░░ -->
+  <div class="mobile-view-bar" id="mobileViewBar">
+    <button class="mobile-view-btn active" id="mobileBtnEdit" data-mobile-view="edit">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+      <span>Edit Form</span>
+    </button>
+    <button class="mobile-view-btn" id="mobileBtnPreview" data-mobile-view="preview">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+      <span>Live Preview</span>
+    </button>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
