@@ -581,3 +581,165 @@ input,textarea,select{font-family:inherit;color:inherit}
     padding: 14px 12px 90px;
   }
 }
+
+/* ═══ IMPORT MODAL & DROPZONE ═══ */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+.modal-backdrop.open {
+  display: flex !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+.modal-card {
+  width: 100%;
+  max-width: 580px;
+  background: var(--surface);
+  border: 1px solid var(--border-2);
+  border-radius: 16px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transform: translateY(16px);
+  transition: transform 0.25s ease;
+}
+.modal-backdrop.open .modal-card {
+  transform: translateY(0);
+}
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+}
+.modal-title-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.modal-icon {
+  font-size: 1.4rem;
+  background: var(--accent-glow);
+  padding: 6px 10px;
+  border-radius: 10px;
+}
+.modal-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text);
+}
+.modal-sub {
+  font-size: 0.76rem;
+  color: var(--text-3);
+}
+.modal-close {
+  background: none;
+  border: none;
+  color: var(--text-3);
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+.modal-close:hover {
+  background: var(--surface-2);
+  color: var(--text);
+}
+.modal-body {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.import-tabs {
+  display: flex;
+  gap: 8px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 8px;
+}
+.import-tab-btn {
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: none;
+  background: none;
+  color: var(--text-3);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.import-tab-btn.active {
+  background: var(--surface-2);
+  color: var(--accent);
+}
+.import-tab-content {
+  display: none;
+}
+.import-tab-content.active {
+  display: block;
+}
+.dropzone {
+  border: 2px dashed var(--border-2);
+  border-radius: 12px;
+  padding: 28px 20px;
+  text-align: center;
+  background: var(--surface-2);
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+.dropzone.dragover {
+  border-color: var(--accent);
+  background: var(--accent-glow);
+}
+.dropzone-icon {
+  font-size: 2rem;
+}
+.dropzone h4 {
+  font-size: 0.92rem;
+  color: var(--text);
+}
+.dropzone p {
+  font-size: 0.76rem;
+  color: var(--text-3);
+  max-width: 320px;
+}
+.import-textarea {
+  min-height: 160px;
+  font-family: inherit;
+  font-size: 0.84rem;
+  margin-top: 6px;
+}
+.import-hint {
+  font-size: 0.74rem;
+  color: var(--accent);
+  background: var(--accent-glow);
+  padding: 8px 12px;
+  border-radius: 6px;
+  margin-top: 8px;
+}
+.modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  border-top: 1px solid var(--border);
+  background: var(--surface-2);
+}

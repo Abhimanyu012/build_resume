@@ -808,6 +808,439 @@
     }
   });
 
+  // ── SMART PARSER & IMPORT SYSTEM ──
+  const importModal = $('#importModal');
+  const importBtn = $('#importBtn');
+  const closeImportModal = $('#closeImportModal');
+  const tabBtnUpload = $('#tabBtnUpload');
+  const tabBtnPaste = $('#tabBtnPaste');
+  const importTabUpload = $('#importTabUpload');
+  const importTabPaste = $('#importTabPaste');
+  const browseFileBtn = $('#browseFileBtn');
+  const resumeFileInput = $('#resumeFileInput');
+  const fileDropzone = $('#fileDropzone');
+  const processImportBtn = $('#processImportBtn');
+  const pasteResumeInput = $('#pasteResumeInput');
+  const downloadBackupBtn = $('#downloadBackupBtn');
+
+  let stagedFile = null;
+
+  function openImportModal() {
+    const modal = $('#importModal');
+    if (modal) {
+      modal.classList.add('open');
+      modal.style.display = 'flex';
+    }
+  }
+
+  function hideImportModal() {
+    const modal = $('#importModal');
+    if (modal) {
+      modal.classList.remove('open');
+      modal.style.display = 'none';
+    }
+  }
+
+  if (importBtn) importBtn.addEventListener('click', openImportModal);
+  if (closeImportModal) closeImportModal.addEventListener('click', hideImportModal);
+  if (importModal) {
+    importModal.addEventListener('click', (e) => {
+      if (e.target === importModal) hideImportModal();
+    });
+  }
+
+  // Modal Tab Switching
+  if (tabBtnUpload && tabBtnPaste) {
+    tabBtnUpload.addEventListener('click', () => {
+      tabBtnUpload.classList.add('active');
+      tabBtnPaste.classList.remove('active');
+      importTabUpload.classList.add('active');
+      importTabPaste.classList.remove('active');
+    });
+    tabBtnPaste.addEventListener('click', () => {
+      tabBtnPaste.classList.add('active');
+      tabBtnUpload.classList.remove('active');
+      importTabPaste.classList.add('active');
+      importTabUpload.classList.remove('active');
+    });
+  }
+
+  function updateDropzoneUI(file) {
+    stagedFile = file;
+    if (!fileDropzone) return;
+    fileDropzone.innerHTML = `
+      <div class="dropzone-icon">📄</div>
+      <h4>Selected File: <strong>${file.name}</strong></h4>
+      <p style="color:var(--accent); font-weight:600;">${(file.size / 1024).toFixed(1)} KB — Ready to extract</p>
+      <button class="btn-secondary-nav" id="browseFileBtn" type="button" style="margin-top:6px;">Choose Different File</button>
+    `;
+    const newBrowseBtn = $('#browseFileBtn');
+    if (newBrowseBtn && resumeFileInput) {
+      newBrowseBtn.addEventListener('click', () => resumeFileInput.click());
+    }
+  }
+
+  // File Upload Handling
+  if (browseFileBtn && resumeFileInput) {
+    browseFileBtn.addEventListener('click', () => resumeFileInput.click());
+    resumeFileInput.addEventListener('change', (e) => {
+      if (e.target.files && e.target.files[0]) {
+        updateDropzoneUI(e.target.files[0]);
+      }
+    });
+  }
+
+  // Drag and Drop
+  if (fileDropzone) {
+    ['dragenter', 'dragover'].forEach((evt) => {
+      fileDropzone.addEventListener(evt, (e) => {
+        e.preventDefault();
+        fileDropzone.classList.add('dragover');
+      });
+    });
+    ['dragleave', 'drop'].forEach((evt) => {
+      fileDropzone.addEventListener(evt, (e) => {
+        e.preventDefault();
+        fileDropzone.classList.remove('dragover');
+      });
+    });
+    fileDropzone.addEventListener('drop', (e) => {
+      if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]) {
+        updateDropzoneUI(e.dataTransfer.files[0]);
+      }
+    });
+  }
+
+  function handleFileImport(file) {
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+      const content = evt.target.result;
+      if (file.name.endsWith('.json')) {
+        try {
+          const parsed = JSON.parse(content);
+          applyDataToForm(parsed);
+          hideImportModal();
+          showToast('JSON resume backup loaded successfully!', 'success');
+        } catch (err) {
+          showToast('Invalid JSON file format', 'error');
+        }
+      } else {
+        parseAndPopulateText(content);
+      }
+    };
+    reader.readAsText(file);
+  }
+
+  // Process Import button
+  if (processImportBtn) {
+    processImportBtn.addEventListener('click', () => {
+      const activeTab = tabBtnUpload.classList.contains('active') ? 'upload' : 'paste';
+      if (activeTab === 'paste') {
+        const text = pasteResumeInput.value.trim();
+        if (!text) {
+          showToast('Please paste resume text first!', 'error');
+          return;
+        }
+        parseAndPopulateText(text);
+      } else {
+        const fileToUse = stagedFile || (resumeFileInput.files && resumeFileInput.files[0]);
+        if (fileToUse) {
+          handleFileImport(fileToUse);
+        } else {
+          showToast('Please select or drag a file to import!', 'error');
+        }
+      }
+    });
+  }
+
+  // Export / Backup JSON download button
+  if (downloadBackupBtn) {
+    downloadBackupBtn.addEventListener('click', () => {
+      const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(state, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute('href', dataStr);
+      downloadAnchor.setAttribute('download', `${(state.personal.fullName || 'resume').toLowerCase().replace(/\s+/g, '_')}_backup.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+      showToast('JSON backup exported successfully!', 'success');
+    });
+  }
+
+  // ── ADVANCED SMART PARSER ENGINE ──
+  function parseAndPopulateText(rawText) {
+    if (!rawText || typeof rawText !== 'string') return;
+
+    // Check if raw text is JSON string (JSON backup)
+    try {
+      const parsedJson = JSON.parse(rawText);
+      if (parsedJson && (parsedJson.personal || parsedJson.skills || parsedJson.experience)) {
+        applyDataToForm(parsedJson);
+        hideImportModal();
+        showToast('JSON resume backup loaded successfully!', 'success');
+        return;
+      }
+    } catch (e) {
+      // Continue to natural text parser
+    }
+
+    const importedState = JSON.parse(JSON.stringify(state));
+    const lines = rawText.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+
+    if (lines.length === 0) {
+      showToast('No readable text found in resume', 'error');
+      return;
+    }
+
+    // 1. Email extraction
+    const emailMatch = rawText.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/i);
+    if (emailMatch) importedState.personal.email = emailMatch[0];
+
+    // 2. Phone extraction
+    const phoneMatch = rawText.match(/(\+?\d{1,4}[-.\s]?)?\(?\d{2,4}\)?[-.\s]?\d{3,4}[-.\s]?\d{3,4}/);
+    if (phoneMatch && phoneMatch[0].length >= 7) importedState.personal.phone = phoneMatch[0];
+
+    // 3. URLs & Socials
+    const linkedinMatch = rawText.match(/(?:https?:\/\/)?(?:www\.)?linkedin\.com\/in\/[a-zA-Z0-9_-]+/i);
+    if (linkedinMatch) importedState.personal.linkedin = linkedinMatch[0].replace(/^https?:\/\//, '');
+
+    const githubMatch = rawText.match(/(?:https?:\/\/)?(?:www\.)?github\.com\/[a-zA-Z0-9_-]+/i);
+    if (githubMatch) importedState.personal.github = githubMatch[0].replace(/^https?:\/\//, '');
+
+    const webMatch = rawText.match(/https?:\/\/[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}[^\s]*/i);
+    if (webMatch && !webMatch[0].includes('linkedin') && !webMatch[0].includes('github')) {
+      importedState.personal.website = webMatch[0].replace(/^https?:\/\//, '');
+    }
+
+    // 4. Location extraction (City, State / Country patterns)
+    const locMatch = rawText.match(/\b([A-Z][a-zA-Z\s]+,\s*[A-Z]{2,3}|[A-Z][a-zA-Z\s]+,\s*[A-Z][a-zA-Z\s]+)\b/);
+    if (locMatch) {
+      const candidateLoc = locMatch[0].trim();
+      if (candidateLoc.length < 35 && !candidateLoc.toLowerCase().includes('university') && !candidateLoc.toLowerCase().includes('company')) {
+        importedState.personal.location = candidateLoc;
+      }
+    }
+
+    // 5. Name & Job Title
+    const nameLineIndex = lines.findIndex(l => 
+      l.length > 2 && l.length < 40 && 
+      !l.includes('@') && !l.includes('http') && !l.includes('www.') &&
+      !/resume|curriculum|vitae|contact|phone|email/i.test(l)
+    );
+
+    if (nameLineIndex !== -1) {
+      importedState.personal.fullName = lines[nameLineIndex];
+      if (lines[nameLineIndex + 1]) {
+        const nextLine = lines[nameLineIndex + 1];
+        if (nextLine.length < 50 && !nextLine.includes('@') && !nextLine.includes('http') && !/summary|experience|education|skills/i.test(nextLine)) {
+          importedState.personal.jobTitle = nextLine;
+        }
+      }
+    }
+
+    // 6. Parse Sections
+    const sections = parseSections(lines);
+
+    if (sections.summary && sections.summary.length > 0) {
+      importedState.personal.summary = sections.summary.join(' ');
+    } else if (lines.length > 3) {
+      const summaryCandidate = lines.find(l => l.length > 60 && !l.includes('@') && !l.includes('http'));
+      if (summaryCandidate) importedState.personal.summary = summaryCandidate;
+    }
+
+    if (sections.experience && sections.experience.length > 0) {
+      const parsedExp = parseExperienceSection(sections.experience);
+      if (parsedExp.length > 0) importedState.experience = parsedExp;
+    }
+
+    if (sections.education && sections.education.length > 0) {
+      const parsedEdu = parseEducationSection(sections.education);
+      if (parsedEdu.length > 0) importedState.education = parsedEdu;
+    }
+
+    if (sections.projects && sections.projects.length > 0) {
+      const parsedProj = parseProjectsSection(sections.projects);
+      if (parsedProj.length > 0) importedState.projects = parsedProj;
+    }
+
+    const parsedSkills = parseSkillsSection(sections.skills || [], rawText);
+    if (parsedSkills.length > 0) {
+      importedState.skills = parsedSkills;
+    }
+
+    applyDataToForm(importedState);
+    hideImportModal();
+    showToast(`Smart import complete! Parsed contact info, ${importedState.experience.length} jobs, and ${importedState.skills.length} skills.`, 'success');
+  }
+
+  // Section Classifier Helper
+  function parseSections(lines) {
+    const sections = { summary: [], experience: [], education: [], skills: [], projects: [] };
+    let currentSec = null;
+
+    lines.forEach((line) => {
+      const lower = line.toLowerCase();
+      if (/^(professional\s+)?summary|about\s+me|profile|objective$/i.test(lower)) {
+        currentSec = 'summary'; return;
+      }
+      if (/^(work\s+)?experience|employment|work\ history|career$/i.test(lower)) {
+        currentSec = 'experience'; return;
+      }
+      if (/^education|academic|qualification(s)?$/i.test(lower)) {
+        currentSec = 'education'; return;
+      }
+      if (/^skills|core\ competencies|technical\ skills|expertise$/i.test(lower)) {
+        currentSec = 'skills'; return;
+      }
+      if (/^projects|key\ projects|personal\ projects$/i.test(lower)) {
+        currentSec = 'projects'; return;
+      }
+
+      if (currentSec && sections[currentSec]) {
+        sections[currentSec].push(line);
+      }
+    });
+
+    return sections;
+  }
+
+  // Experience Parser Helper
+  function parseExperienceSection(expLines) {
+    const items = [];
+    let currentItem = null;
+    const dateRegex = /\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec|January|February|March|April|June|July|August|September|October|November|December|\d{4})\b.*\b(\d{4}|Present|Current)\b/i;
+
+    expLines.forEach((line) => {
+      const dateMatch = line.match(dateRegex);
+      if (dateMatch || !currentItem) {
+        if (currentItem) items.push(currentItem);
+        
+        let title = line;
+        let company = 'Company / Organization';
+        let dates = dateMatch ? dateMatch[0] : '2020 - Present';
+        
+        if (line.includes(' at ')) {
+          const parts = line.split(' at ');
+          title = parts[0].trim();
+          company = parts[1].replace(dateRegex, '').trim();
+        } else if (line.includes('|')) {
+          const parts = line.split('|');
+          title = parts[0].trim();
+          company = parts[1].replace(dateRegex, '').trim();
+        } else if (line.includes(' - ') && !dateMatch) {
+          const parts = line.split(' - ');
+          title = parts[0].trim();
+          company = parts[1].trim();
+        }
+
+        currentItem = {
+          id: generateId(),
+          title: title.replace(dateRegex, '').trim() || 'Role / Position',
+          company: company || 'Company Name',
+          dates: dates,
+          location: '',
+          desc: ''
+        };
+      } else {
+        if (currentItem) {
+          if (currentItem.desc) currentItem.desc += '\n' + line;
+          else currentItem.desc = line;
+        }
+      }
+    });
+
+    if (currentItem) items.push(currentItem);
+    return items;
+  }
+
+  // Education Parser Helper
+  function parseEducationSection(eduLines) {
+    const items = [];
+    let currentItem = null;
+
+    eduLines.forEach((line) => {
+      if (/degree|bachelor|master|b\.s|m\.s|phd|diploma|associate|university|college|school/i.test(line) || !currentItem) {
+        if (currentItem) items.push(currentItem);
+        const dateMatch = line.match(/\b(19|20)\d{2}\b.*\b(19|20)\d{2}\b|\b(19|20)\d{2}\b/);
+        currentItem = {
+          id: generateId(),
+          degree: line.replace(/\b(19|20)\d{2}\b/g, '').trim(),
+          school: 'University / Institution',
+          dates: dateMatch ? dateMatch[0] : '2016 - 2020',
+          desc: ''
+        };
+      } else if (currentItem) {
+        if (line.toLowerCase().includes('university') || line.toLowerCase().includes('college') || line.toLowerCase().includes('institute')) {
+          currentItem.school = line;
+        } else {
+          currentItem.desc += (currentItem.desc ? ' ' : '') + line;
+        }
+      }
+    });
+
+    if (currentItem) items.push(currentItem);
+    return items;
+  }
+
+  // Projects Parser Helper
+  function parseProjectsSection(projLines) {
+    const items = [];
+    let currentItem = null;
+
+    projLines.forEach((line) => {
+      if ((line.length < 50 && !line.startsWith('•') && !line.startsWith('-')) || !currentItem) {
+        if (currentItem) items.push(currentItem);
+        currentItem = {
+          id: generateId(),
+          name: line.trim(),
+          tech: '',
+          desc: ''
+        };
+      } else if (currentItem) {
+        currentItem.desc += (currentItem.desc ? '\n' : '') + line;
+      }
+    });
+
+    if (currentItem) items.push(currentItem);
+    return items;
+  }
+
+  // Skills Parser Helper
+  function parseSkillsSection(skillsLines, fullText) {
+    const result = [];
+    const addedNames = new Set();
+
+    skillsLines.forEach((line) => {
+      const parts = line.split(/[,•|;\n]/).map(s => s.trim()).filter(s => s.length > 1 && s.length < 35);
+      parts.forEach((skillName) => {
+        const clean = skillName.replace(/^[-*•]\s*/, '');
+        if (clean && !addedNames.has(clean.toLowerCase()) && !/skills|expertise|competencies/i.test(clean)) {
+          addedNames.add(clean.toLowerCase());
+          result.push({ id: generateId(), name: clean, level: 'advanced' });
+        }
+      });
+    });
+
+    const knownSkills = [
+      'React', 'JavaScript', 'TypeScript', 'HTML5', 'CSS3', 'Node.js', 'Python', 'Figma',
+      'UI/UX Design', 'Design Systems', 'Prototyping', 'User Research', 'Tailwind', 'Git',
+      'SQL', 'AWS', 'Docker', 'GraphQL', 'Vue', 'Angular', 'Java', 'C++', 'Go', 'Next.js',
+      'Redux', 'REST API', 'Express', 'MongoDB', 'PostgreSQL', 'Jest', 'Webpack', 'Vite'
+    ];
+
+    knownSkills.forEach((skill) => {
+      if (!addedNames.has(skill.toLowerCase())) {
+        const regex = new RegExp(`\\b${skill.replace(/\+/g, '\\+')}\\b`, 'i');
+        if (regex.test(fullText)) {
+          addedNames.add(skill.toLowerCase());
+          result.push({ id: generateId(), name: skill, level: 'advanced' });
+        }
+      }
+    });
+
+    return result;
+  }
+
   // ── Init ──
   load();
   if (window.innerWidth <= 860) {
