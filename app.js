@@ -171,7 +171,7 @@
             <label class="form-label">${f.label}</label>
             <button class="btn-ai-enhance-inline card-ai-enhance-btn" type="button" data-key="${f.key}">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2v8M12 18v4M4.93 4.93l5.66 5.66M13.41 13.41l5.66 5.66M2 12h8M18 12h4M4.93 19.07l5.66-5.66M13.41 10.59l5.66-5.66"/></svg>
-              <span>✨ AI Enhance</span>
+              <span>Enhance with AI</span>
             </button>
           </div>
           <textarea class="form-input form-textarea" data-key="${f.key}" rows="3" placeholder="${f.placeholder || ''}">${val}</textarea>
@@ -222,7 +222,7 @@
             textarea.value = enhanced;
             data[key] = enhanced;
             onUpdate();
-            showToast(`✨ Enhanced ${sectionTitle} with impactful metrics!`, 'success');
+            showToast(`Enhanced ${sectionTitle} with impactful metrics!`, 'success');
           }
         } catch (err) {
           console.error('AI Enhance Error:', err);
@@ -428,7 +428,66 @@
     resumePaper.setAttribute('data-template', state.template);
 
     if (!hasContent) {
-      resumePaper.innerHTML = `<div class="resume-empty"><div class="empty-icon">⬡</div><h3>Start Building</h3><p>Fill in your details on the left panel and watch your resume come to life in real-time.</p></div>`;
+      resumePaper.innerHTML = `
+        <div class="resume-empty">
+          <div class="empty-card">
+            <div class="empty-header">
+              <span class="empty-badge">Executive Resume Builder</span>
+              <h3 class="empty-title">Welcome to RésuméForge</h3>
+              <p class="empty-sub">Create high-impact, ATS-optimized executive resumes in minutes with real-time preview and AI enhancement.</p>
+            </div>
+            
+            <div class="empty-steps-grid">
+              <div class="empty-step-card">
+                <div class="empty-step-num">1</div>
+                <div class="empty-step-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                </div>
+                <h4>1. Fill or Import</h4>
+                <p>Use the editor panel on the left, or upload your PDF/DOCX resume file.</p>
+              </div>
+
+              <div class="empty-step-card">
+                <div class="empty-step-num">2</div>
+                <div class="empty-step-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v8M12 18v4M4.93 4.93l5.66 5.66M13.41 13.41l5.66 5.66M2 12h8M18 12h4M4.93 19.07l5.66-5.66M13.41 10.59l5.66-5.66"/></svg>
+                </div>
+                <h4>2. AI Enhance</h4>
+                <p>Rewrite bullet points with metric-rich statements & fix fluff automatically.</p>
+              </div>
+
+              <div class="empty-step-card">
+                <div class="empty-step-num">3</div>
+                <div class="empty-step-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                </div>
+                <h4>3. Export PDF</h4>
+                <p>Choose between Modern, Classic, Minimal, or Compact templates and download PDF.</p>
+              </div>
+            </div>
+
+            <!-- ⚠️ IMPORTANT API KEY NOTICE AT HOME DEFAULT PLACE -->
+            <div class="empty-important-notice">
+              <div class="notice-badge-tag">⚠️ IMPORTANT NOTICE</div>
+              <div class="notice-body-text">
+                <p>AI features require a free <strong>OpenRouter API Key</strong>. Enter your key in <a href="#" id="emptyNoticeSettingsLink" class="empty-settings-link">Settings</a> to unlock AI Content Enhancement & Resume File Parsing.</p>
+                <a href="https://openrouter.ai/keys" target="_blank" rel="noopener noreferrer" class="openrouter-link-btn">Get Free Key at openrouter.ai/keys →</a>
+              </div>
+            </div>
+
+            <div class="empty-actions">
+              <button class="empty-btn-primary" id="emptyDemoBtn" type="button">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                <span>Load Sample Data</span>
+              </button>
+              <button class="empty-btn-secondary" id="emptyImportBtn" type="button">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                <span>Import Resume File</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
       return;
     }
 
@@ -453,12 +512,12 @@
 
     // Contact items
     const contacts = [];
-    if (p.email) contacts.push(`<span>&#9993; <a href="mailto:${esc(p.email)}" class="resume-link" target="_blank" rel="noopener noreferrer">${esc(p.email)}</a></span>`);
-    if (p.phone) contacts.push(`<span>&#9742; <a href="tel:${esc(p.phone).replace(/\s+/g, '')}" class="resume-link">${esc(p.phone)}</a></span>`);
-    if (p.location) contacts.push(`<span>&#9673; ${esc(p.location)}</span>`);
-    if (p.website) contacts.push(`<span>🌐 Website: <a href="${esc(formatUrl(p.website))}" target="_blank" rel="noopener noreferrer" class="resume-link">Link</a></span>`);
-    if (p.linkedin) contacts.push(`<span>in LinkedIn: <a href="${esc(formatUrl(p.linkedin))}" target="_blank" rel="noopener noreferrer" class="resume-link">Link</a></span>`);
-    if (p.github) contacts.push(`<span>🐙 GitHub: <a href="${esc(formatUrl(p.github))}" target="_blank" rel="noopener noreferrer" class="resume-link">Link</a></span>`);
+    if (p.email) contacts.push(`<span><a href="mailto:${esc(p.email)}" class="resume-link" target="_blank" rel="noopener noreferrer">${esc(p.email)}</a></span>`);
+    if (p.phone) contacts.push(`<span><a href="tel:${esc(p.phone).replace(/\s+/g, '')}" class="resume-link">${esc(p.phone)}</a></span>`);
+    if (p.location) contacts.push(`<span>${esc(p.location)}</span>`);
+    if (p.website) contacts.push(`<span><a href="${esc(formatUrl(p.website))}" target="_blank" rel="noopener noreferrer" class="resume-link">${esc(p.website).replace(/^https?:\/\//i, '')}</a></span>`);
+    if (p.linkedin) contacts.push(`<span><a href="${esc(formatUrl(p.linkedin))}" target="_blank" rel="noopener noreferrer" class="resume-link">${esc(p.linkedin).replace(/^https?:\/\//i, '')}</a></span>`);
+    if (p.github) contacts.push(`<span><a href="${esc(formatUrl(p.github))}" target="_blank" rel="noopener noreferrer" class="resume-link">${esc(p.github).replace(/^https?:\/\//i, '')}</a></span>`);
 
     // Header
     html += `<div class="resume-header">
@@ -791,7 +850,7 @@
           state.personal.summary = enhanced;
           render();
           debouncedSave();
-          showToast('✨ Enhanced summary with impactful metrics!', 'success');
+          showToast('Enhanced summary with impactful metrics!', 'success');
         }
       } catch (err) {
         console.error('Summary enhancement error:', err);
@@ -933,7 +992,8 @@
   }
 
   async function fixAllFluffWithAI() {
-    const key = getAIKey();
+    const key = ensureApiKeyOrPrompt('Fluff Corrector');
+    if (!key) return;
     const navBtn = $('#navFixFluffBtn');
     const cardBtn = $('#cardFixFluffBtn');
 
@@ -954,7 +1014,7 @@
     };
 
     setButtonsLoading(true);
-    showToast('⚡ AI Engine auditing & eliminating all fluff...', 'info');
+      showToast('AI Engine auditing and eliminating fluff...', 'info');
 
     const currentData = {
       summary: state.personal?.summary || '',
@@ -1078,7 +1138,7 @@ Return JSON strictly matching this schema:
         }
       });
 
-      showToast('🎉 All fluff removed! Content score boosted to 100%!', 'success');
+      showToast('All fluff removed! Content score boosted to 100%!', 'success');
     } else {
       showToast('Could not auto-fix fluff. Please verify your OpenRouter API key.', 'error');
     }
@@ -1107,11 +1167,13 @@ Return JSON strictly matching this schema:
     const mobileBar = $('.mobile-view-bar');
     const settingsOverlay = $('#settingsOverlay');
     const importModal = $('#importModal');
+    const previewGuideOverlay = $('#previewGuideOverlay');
     const toastWrap = $('#toastWrap');
     if (fabDock) fabDock.style.setProperty('display', 'none', 'important');
     if (mobileBar) mobileBar.style.setProperty('display', 'none', 'important');
     if (settingsOverlay) settingsOverlay.style.setProperty('display', 'none', 'important');
     if (importModal) importModal.style.setProperty('display', 'none', 'important');
+    if (previewGuideOverlay) previewGuideOverlay.style.setProperty('display', 'none', 'important');
     if (toastWrap) toastWrap.style.setProperty('display', 'none', 'important');
   }
 
@@ -1424,12 +1486,122 @@ Node.js, Python, React, Docker, Kubernetes, AWS, PostgreSQL, Microservices, C++,
     settingsOverlay.style.display = 'none';
   }
 
+  // How to Use Guide Modal Handlers
+  // ── RESUME PREVIEW ONBOARDING GUIDE ENGINE ──
+  const PREVIEW_GUIDE_KEY = 'rf_preview_guide_shown';
+  const fabGuideBtn = $('#fabGuideBtn');
+  const previewGuideOverlay = $('#previewGuideOverlay');
+  const closePreviewGuideBtn = $('#closePreviewGuideBtn');
+  const previewGuideGotItBtn = $('#previewGuideGotItBtn');
+  const previewGuideDemoBtn = $('#previewGuideDemoBtn');
+  const previewGuideImportBtn = $('#previewGuideImportBtn');
+
+  function openPreviewGuideModal() {
+    if (!previewGuideOverlay) return;
+    previewGuideOverlay.style.display = 'flex';
+    previewGuideOverlay.classList.add('open');
+  }
+
+  function hidePreviewGuideModal(markAsSeen = true) {
+    if (!previewGuideOverlay) return;
+    previewGuideOverlay.style.display = 'none';
+    previewGuideOverlay.classList.remove('open');
+    if (markAsSeen) {
+      try { localStorage.setItem(PREVIEW_GUIDE_KEY, 'true'); } catch (e) {}
+    }
+  }
+
+  function checkAutoShowPreviewGuide() {
+    try {
+      const hasSeen = localStorage.getItem(PREVIEW_GUIDE_KEY);
+      if (!hasSeen) {
+        setTimeout(openPreviewGuideModal, 350);
+      }
+    } catch (e) {
+      setTimeout(openPreviewGuideModal, 350);
+    }
+  }
+
+  if (closePreviewGuideBtn) closePreviewGuideBtn.addEventListener('click', () => hidePreviewGuideModal(true));
+  if (previewGuideGotItBtn) previewGuideGotItBtn.addEventListener('click', () => hidePreviewGuideModal(true));
+  if (previewGuideDemoBtn) {
+    previewGuideDemoBtn.addEventListener('click', () => {
+      hidePreviewGuideModal(true);
+      applyDataToForm(DEMO_DATA);
+      showToast('Demo data loaded into resume preview!', 'success');
+    });
+  }
+  if (previewGuideImportBtn) {
+    previewGuideImportBtn.addEventListener('click', () => {
+      hidePreviewGuideModal(true);
+      openImportModal();
+    });
+  }
+  if (previewGuideOverlay) {
+    previewGuideOverlay.addEventListener('click', (e) => {
+      if (e.target === previewGuideOverlay) hidePreviewGuideModal(true);
+    });
+  }
+
+  if (fabGuideBtn) {
+    fabGuideBtn.addEventListener('click', openPreviewGuideModal);
+  }
+
+  if (resumePaper) {
+    resumePaper.addEventListener('click', (e) => {
+      const demoTarget = e.target.closest('#emptyDemoBtn');
+      const importTarget = e.target.closest('#emptyImportBtn');
+      const settingsTarget = e.target.closest('#emptyNoticeSettingsLink');
+      if (demoTarget) {
+        loadDemoData();
+      } else if (importTarget) {
+        openImportModal();
+      } else if (settingsTarget) {
+        e.preventDefault();
+        openSettingsModal();
+      }
+    });
+  }
+
+  // Bind Settings Modal Triggers
   if (fabSettingsBtn) fabSettingsBtn.addEventListener('click', openSettingsModal);
   if (closeSettingsBtn) closeSettingsBtn.addEventListener('click', hideSettingsModal);
   if (settingsOverlay) {
     settingsOverlay.addEventListener('click', (e) => {
       if (e.target === settingsOverlay) hideSettingsModal();
     });
+  }
+
+  const guideOpenSettingsBtn = $('#guideOpenSettingsBtn');
+  if (guideOpenSettingsBtn) {
+    guideOpenSettingsBtn.addEventListener('click', () => {
+      hidePreviewGuideModal(true);
+      openSettingsModal();
+    });
+  }
+
+  function updateApiKeyBanner() {
+    const banner = $('#apiKeyBanner');
+    const textEl = $('#apiKeyBannerText');
+    const btn = $('#bannerSetKeyBtn');
+    if (!banner) return;
+
+    const key = getAIKey();
+    const hasKey = Boolean(key && key.length > 5);
+
+    if (hasKey) {
+      banner.classList.add('has-key');
+      if (textEl) {
+        textEl.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> <span style="color:#10b981;font-weight:600">OpenRouter API Key Active</span>`;
+      }
+      if (btn) btn.textContent = 'Settings';
+    } else {
+      banner.classList.remove('has-key');
+      if (textEl) {
+        textEl.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> <span>AI features require OpenRouter key.</span> <a href="https://openrouter.ai/keys" target="_blank" rel="noopener noreferrer" class="api-key-banner-link">Get Free Key →</a>`;
+      }
+      if (btn) btn.textContent = 'Set Key';
+    }
   }
 
   function updateKeyStatusBadge() {
@@ -1439,13 +1611,19 @@ Node.js, Python, React, Docker, Kubernetes, AWS, PostgreSQL, Microservices, C++,
     const hasKey = Boolean(key && key.length > 5);
 
     if (modalBadge) {
-      modalBadge.textContent = hasKey ? '✓ Key Active' : 'No Key Set';
-      modalBadge.style.color = hasKey ? '#10b981' : 'var(--text-3)';
+      modalBadge.textContent = hasKey ? '✓ Key Active' : '🔑 API Key Required';
+      modalBadge.style.color = hasKey ? '#10b981' : '#f59e0b';
     }
     if (settingsStatus) {
-      settingsStatus.textContent = hasKey ? '✓ API Key Saved & Active' : 'No key saved. AI operations will use default limits.';
+      settingsStatus.textContent = hasKey ? '✓ API Key Saved & Active' : '⚠️ No API Key saved. AI features require an OpenRouter key.';
       settingsStatus.className = `settings-key-status ${hasKey ? 'active' : ''}`;
     }
+    updateApiKeyBanner();
+  }
+
+  const bannerSetKeyBtn = $('#bannerSetKeyBtn');
+  if (bannerSetKeyBtn) {
+    bannerSetKeyBtn.addEventListener('click', openSettingsModal);
   }
 
   // Save API Key to localStorage
@@ -1465,6 +1643,9 @@ Node.js, Python, React, Docker, Kubernetes, AWS, PostgreSQL, Microservices, C++,
 
   if (saveAiKeyBtn) saveAiKeyBtn.addEventListener('click', () => saveApiKey('aiApiKeyInput'));
   if (settingsSaveKeyBtn) settingsSaveKeyBtn.addEventListener('click', () => saveApiKey('settingsApiKeyInput'));
+
+  // Initialize banner state
+  updateApiKeyBanner();
 
   // Modal Tab Switching
   if (tabBtnUpload && tabBtnPaste) {
@@ -1770,8 +1951,30 @@ Node.js, Python, React, Docker, Kubernetes, AWS, PostgreSQL, Microservices, C++,
     return DEFAULT_OPENROUTER_KEY;
   }
 
-  async function enhanceTextWithAI(originalText, sectionType, contextInfo = {}) {
+  function ensureApiKeyOrPrompt(featureName = 'AI features') {
     const key = getAIKey();
+    if (key && key.trim().length > 5) {
+      return key.trim();
+    }
+
+    showToast(`🔑 OpenRouter API Key required for ${featureName}. Please enter your key in Settings.`, 'error');
+    openSettingsModal();
+
+    setTimeout(() => {
+      const input = $('#settingsApiKeyInput');
+      if (input) {
+        input.focus();
+        input.classList.add('highlight-pulse');
+        setTimeout(() => input.classList.remove('highlight-pulse'), 3000);
+      }
+    }, 200);
+
+    return null;
+  }
+
+  async function enhanceTextWithAI(originalText, sectionType, contextInfo = {}) {
+    const key = ensureApiKeyOrPrompt(sectionType + ' AI enhancement');
+    if (!key) return null;
 
     let promptContext = `Section Type: ${sectionType}\n`;
     if (contextInfo.role || contextInfo.company) {
@@ -1903,8 +2106,8 @@ STRICT RULES:
 
   // Multi-model OpenRouter caller with automatic fallback
   async function callOpenRouterAI(systemPrompt, userPrompt) {
-    const apiKey = getAIKey();
-    if (!apiKey) throw new Error('No API key available.');
+    const apiKey = ensureApiKeyOrPrompt('Resume Import AI Parser');
+    if (!apiKey) throw new Error('OpenRouter API key required. Please enter your API key in Settings.');
 
     const candidateModels = [
       'google/gemini-3.6-flash',
@@ -2498,5 +2701,6 @@ STRICT RULES:
     setMobileView('edit');
   }
   render();
+  checkAutoShowPreviewGuide();
   setTimeout(autoResizeAllTextareas, 50);
 })();
