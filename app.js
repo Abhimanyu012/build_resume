@@ -423,7 +423,17 @@
   function render() {
     evaluateContentQuality();
     const p = state.personal;
-    const hasContent = p.fullName || p.jobTitle || state.experience.length || state.education.length || state.skills.length;
+    const hasContent = Boolean(
+      (p.fullName && p.fullName.trim()) ||
+      (p.jobTitle && p.jobTitle.trim()) ||
+      (p.summary && p.summary.trim()) ||
+      state.experience.some(e => (e.role && e.role.trim()) || (e.company && e.company.trim()) || (e.description && e.description.trim())) ||
+      state.education.some(e => (e.degree && e.degree.trim()) || (e.school && e.school.trim())) ||
+      state.projects.some(proj => (proj.name && proj.name.trim()) || (proj.description && proj.description.trim())) ||
+      state.skills.some(s => s.name && s.name.trim()) ||
+      (state.languages && state.languages.trim()) ||
+      (state.interests && state.interests.trim())
+    );
 
     resumePaper.setAttribute('data-template', state.template);
 
@@ -759,7 +769,7 @@
     }
   });
 
-  function resetForm() {
+  function resetForm(showNotification = true) {
     const emptyState = {
       template: state.template,
       zoom: state.zoom,
@@ -784,7 +794,9 @@
       interests: ''
     };
     applyDataToForm(emptyState);
-    showToast('Form reset to blank.', 'success');
+    if (showNotification) {
+      showToast('Form reset to blank. Welcome screen displayed.', 'success');
+    }
   }
 
   function applyDataToForm(data) {
@@ -834,6 +846,11 @@
       if (!summaryInput) return;
 
       const currentText = summaryInput.value.trim();
+      if (!currentText) {
+        showToast('⚠️ Please enter summary bullet points or a draft first before enhancing with AI.', 'error');
+        summaryInput.focus();
+        return;
+      }
       const contextInfo = {
         role: state.personal?.jobTitle || 'Professional',
         name: state.personal?.fullName || ''
@@ -867,131 +884,167 @@
     const scoreBadge = $('#atsScoreBadge');
     if (!scoreBadge) return;
 
-    let score = 100;
-    let metricsIssues = 0;
-    let repetitionIssues = 0;
-    let grammarIssues = 0;
-    let bulletIssues = 0;
+    const p = state.personal || {};
+    const hasName = Boolean(p.fullName && p.fullName.trim());
+    const hasTitle = Boolean(p.jobTitle && p.jobTitle.trim());
+    const hasEmail = Boolean(p.email && p.email.trim());
+    const hasPhone = Boolean(p.phone && p.phone.trim());
+    const hasSummary = Boolean(p.summary && p.summary.trim());
 
-    const allBullets = [];
-    const firstVerbs = [];
+    const hasExperience = (state.experience || []).some(e => (e.role && e.role.trim()) || (e.description && e.description.trim()));
+    const hasEducation = (state.education || []).some(e => (e.degree && e.degree.trim()) || (e.school && e.school.trim()));
+    const hasProjects = (state.projects || []).some(proj => (proj.name && proj.name.trim()) || (proj.description && proj.description.trim()));
+    const hasSkills = (state.skills || []).some(s => s.name && s.name.trim());
 
+    const hasAnyContent = hasName || hasTitle || hasEmail || hasPhone || hasSummary || hasExperience || hasEducation || hasProjects || hasSkills;
+
+    const updateTag = (tagId, iconId, text, isSuccess) => {
+      const tag = $(`#${tagId}`);
+      const icon = $(`#${iconId}`);
+      if (tag) {
+        tag.textContent = text;
+        tag.className = `ats-check-tag ${isSuccess ? 'tag-success' : 'tag-warning'}`;
+      }
+      if (icon) {
+        icon.textContent = isSuccess ? '✓' : '✕';
+        icon.className = `ats-check-icon ${isSuccess ? 'check' : 'cross'}`;
+      }
+    };
+
+    // ── EMPTY STATE ── If no content exists, show 0% and "No Data" for all items
+    if (!hasAnyContent) {
+      scoreBadge.textContent = '0%';
+      scoreBadge.classList.remove('high');
+      const progressFill = $('#atsProgressFill');
+      if (progressFill) progressFill.style.width = '0%';
+
+      const setEmptyTag = (tagId, iconId) => {
+        const tag = $(`#${tagId}`);
+        const icon = $(`#${iconId}`);
+        if (tag) {
+          tag.textContent = 'No Data';
+          tag.className = 'ats-check-tag tag-warning';
+        }
+        if (icon) {
+          icon.textContent = '—';
+          icon.className = 'ats-check-icon cross';
+        }
+      };
+
+      setEmptyTag('tagAtsParse', 'iconAtsParse');
+      setEmptyTag('tagMetrics', 'iconMetrics');
+      setEmptyTag('tagRepetition', 'iconRepetition');
+      setEmptyTag('tagGrammar', 'iconGrammar');
+      setEmptyTag('tagBullets', 'iconBullets');
+      return;
+    }
+
+    // ── REAL ACCURATE MEASURES CALCULATION ──
     const textToScan = [
-      state.personal?.summary || '',
+      p.summary || '',
       ...(state.experience || []).map(e => e.description || ''),
-      ...(state.projects || []).map(p => p.description || '')
+      ...(state.projects || []).map(proj => proj.description || '')
     ].join('\n');
 
-    // Check Quantifying Impact (numbers, %, $, scale metrics)
-    const hasNumbers = /\d+%|\$\d+|\d+\+|\d+k|\d+M|\d+x|\d+ years|\d+ users/i.test(textToScan);
-    if (!hasNumbers) {
-      score -= 20;
-      metricsIssues = 1;
+    // 1. ATS Parse Rate (Max 20 pts)
+    const contactCount = [hasName, hasTitle, hasEmail, hasPhone].filter(Boolean).length;
+    let atsPts = 0;
+    if (contactCount === 4) {
+      atsPts = 20;
+      updateTag('tagAtsParse', 'iconAtsParse', '100% Complete', true);
+    } else if (contactCount >= 2) {
+      atsPts = 12;
+      updateTag('tagAtsParse', 'iconAtsParse', `${4 - contactCount} missing fields`, false);
+    } else {
+      atsPts = 5;
+      updateTag('tagAtsParse', 'iconAtsParse', 'Missing contact details', false);
     }
 
-    // Check Bullet Consistency & Verb Repetition
+    // 2. Quantifying Impact (Metrics & Scale - Max 25 pts)
+    const metricMatches = textToScan.match(/\d+%|\$\d+|\d+\+|\b\d+k\b|\b\d+m\b|\b\d+x\b|\b\d+\s*(years?|users?|clients?|projects?|team|members?|revenue|growth|reduced|increased)\b/gi) || [];
+    const metricCount = metricMatches.length;
+    let metricPts = 0;
+    if (metricCount >= 3) {
+      metricPts = 25;
+      updateTag('tagMetrics', 'iconMetrics', `${metricCount} metrics (Strong)`, true);
+    } else if (metricCount > 0) {
+      metricPts = 12;
+      updateTag('tagMetrics', 'iconMetrics', `${metricCount} metrics (Add more)`, false);
+    } else {
+      metricPts = 0;
+      updateTag('tagMetrics', 'iconMetrics', '0 metrics found', false);
+    }
+
+    // 3. Verb Repetition (Max 20 pts)
     const lines = textToScan.split('\n').map(l => l.trim()).filter(Boolean);
+    const firstVerbs = [];
     lines.forEach(line => {
-      if (!line.startsWith('•') && !line.startsWith('-')) {
-        bulletIssues++;
-      } else {
-        allBullets.push(line);
-        const firstWord = line.replace(/^[•\-\*]\s*/, '').split(' ')[0]?.toLowerCase();
-        if (firstWord && firstWord.length > 3) {
-          firstVerbs.push(firstWord);
-        }
-      }
+      const cleanLine = line.replace(/^[•\-\*]\s*/, '').trim();
+      const firstWord = cleanLine.split(' ')[0]?.toLowerCase();
+      if (firstWord && firstWord.length > 3) firstVerbs.push(firstWord);
     });
 
-    if (bulletIssues > 2) {
-      score -= 10;
-    }
-
-    // Check repetition
     const verbCounts = {};
+    let repeatedVerbsCount = 0;
     firstVerbs.forEach(v => {
       verbCounts[v] = (verbCounts[v] || 0) + 1;
-      if (verbCounts[v] > 1) repetitionIssues = 1;
+      if (verbCounts[v] === 2) repeatedVerbsCount++;
     });
-    if (repetitionIssues > 0) score -= 15;
 
-    // Check spelling/typos heuristic
-    if (/the the|and and|i i|managed to|responsible for|helped to|worked on/i.test(textToScan)) {
-      grammarIssues = 2;
-      score -= 15;
+    let verbPts = 0;
+    if (repeatedVerbsCount === 0) {
+      verbPts = 20;
+      updateTag('tagRepetition', 'iconRepetition', 'Varied action verbs', true);
+    } else {
+      verbPts = 8;
+      updateTag('tagRepetition', 'iconRepetition', `${repeatedVerbsCount} repeated verbs`, false);
     }
 
-    score = Math.max(45, Math.min(100, score));
+    // 4. Spelling & Fluff Heuristics (Max 20 pts)
+    const fluffMatches = textToScan.match(/\b(responsible for|helped with|worked on|duties included|assisted in|tasked with|utilize|synergy|hardworking|team player)\b/gi) || [];
+    const fluffCount = fluffMatches.length;
+    let fluffPts = 0;
+    if (fluffCount === 0) {
+      fluffPts = 20;
+      updateTag('tagGrammar', 'iconGrammar', 'No fluff detected', true);
+    } else {
+      fluffPts = 8;
+      updateTag('tagGrammar', 'iconGrammar', `${fluffCount} fluff phrases`, false);
+    }
 
-    // Update UI elements
-    scoreBadge.textContent = `${score}%`;
+    // 5. Bullets Consistency (Max 15 pts)
+    const bulletLines = lines.filter(l => l.startsWith('•') || l.startsWith('-') || l.startsWith('*'));
+    let bulletPts = 0;
+    if (lines.length === 0 || bulletLines.length / lines.length >= 0.7) {
+      bulletPts = 15;
+      updateTag('tagBullets', 'iconBullets', 'Consistent bullets', true);
+    } else {
+      bulletPts = 5;
+      updateTag('tagBullets', 'iconBullets', 'Format with bullets', false);
+    }
+
+    // Calculate Final Total Score
+    const totalScore = Math.max(0, Math.min(100, Math.round(atsPts + metricPts + verbPts + fluffPts + bulletPts)));
+
+    scoreBadge.textContent = `${totalScore}%`;
     const progressFill = $('#atsProgressFill');
-    if (progressFill) progressFill.style.width = `${score}%`;
+    if (progressFill) progressFill.style.width = `${totalScore}%`;
 
-    if (score >= 90) {
+    if (totalScore >= 85) {
       scoreBadge.classList.add('high');
     } else {
       scoreBadge.classList.remove('high');
     }
-
-    const tagMetrics = $('#tagMetrics');
-    const iconMetrics = $('#iconMetrics');
-    if (tagMetrics && iconMetrics) {
-      if (metricsIssues === 0) {
-        tagMetrics.textContent = 'No issues';
-        tagMetrics.className = 'ats-check-tag tag-success';
-        if (iconMetrics) { iconMetrics.textContent = '✓'; iconMetrics.className = 'ats-check-icon check'; }
-      } else {
-        tagMetrics.textContent = `${metricsIssues} issue`;
-        tagMetrics.className = 'ats-check-tag tag-warning';
-        if (iconMetrics) { iconMetrics.textContent = '✕'; iconMetrics.className = 'ats-check-icon cross'; }
-      }
-    }
-
-    const tagRepetition = $('#tagRepetition');
-    const iconRepetition = $('#iconRepetition');
-    if (tagRepetition && iconRepetition) {
-      if (repetitionIssues === 0) {
-        tagRepetition.textContent = 'No issues';
-        tagRepetition.className = 'ats-check-tag tag-success';
-        if (iconRepetition) { iconRepetition.textContent = '✓'; iconRepetition.className = 'ats-check-icon check'; }
-      } else {
-        tagRepetition.textContent = `${repetitionIssues} issue`;
-        tagRepetition.className = 'ats-check-tag tag-warning';
-        if (iconRepetition) { iconRepetition.textContent = '✕'; iconRepetition.className = 'ats-check-icon cross'; }
-      }
-    }
-
-    const tagGrammar = $('#tagGrammar');
-    const iconGrammar = $('#iconGrammar');
-    if (tagGrammar && iconGrammar) {
-      if (grammarIssues === 0) {
-        tagGrammar.textContent = 'No issues';
-        tagGrammar.className = 'ats-check-tag tag-success';
-        if (iconGrammar) { iconGrammar.textContent = '✓'; iconGrammar.className = 'ats-check-icon check'; }
-      } else {
-        tagGrammar.textContent = `${grammarIssues} issues`;
-        tagGrammar.className = 'ats-check-tag tag-warning';
-        if (iconGrammar) { iconGrammar.textContent = '✕'; iconGrammar.className = 'ats-check-icon cross'; }
-      }
-    }
-
-    const tagBullets = $('#tagBullets');
-    const iconBullets = $('#iconBullets');
-    if (tagBullets && iconBullets) {
-      if (bulletIssues <= 2) {
-        tagBullets.textContent = 'Consistent';
-        tagBullets.className = 'ats-check-tag tag-success';
-        if (iconBullets) { iconBullets.textContent = '✓'; iconBullets.className = 'ats-check-icon check'; }
-      } else {
-        tagBullets.textContent = `${bulletIssues} inconsistent`;
-        tagBullets.className = 'ats-check-tag tag-warning';
-        if (iconBullets) { iconBullets.textContent = '✕'; iconBullets.className = 'ats-check-icon cross'; }
-      }
-    }
   }
 
   async function fixAllFluffWithAI() {
+    const p = state.personal;
+    const hasContent = Boolean((p.summary && p.summary.trim()) || state.experience.some(e => e.description && e.description.trim()) || state.projects.some(proj => proj.description && proj.description.trim()));
+    if (!hasContent) {
+      showToast('⚠️ Please enter summary or work experience before running Fluff Corrector.', 'error');
+      return;
+    }
+
     const key = ensureApiKeyOrPrompt('Fluff Corrector');
     if (!key) return;
     const navBtn = $('#navFixFluffBtn');
@@ -1267,17 +1320,11 @@ Return JSON strictly matching this schema:
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (!raw) {
-        // If empty, load DEMO_DATA by default!
-        applyDataToForm(DEMO_DATA);
+        // First open / initial visit: show Welcome screen with guidance & API key notice by default
+        resetForm(false);
         return;
       }
       const data = JSON.parse(raw);
-
-      // If saved data has no name, show demo
-      if (!data.personal || !data.personal.fullName) {
-        applyDataToForm(DEMO_DATA);
-        return;
-      }
 
       // Safe canonical merge instead of shallow Object.assign
       mergeIntoState(data);
@@ -1285,12 +1332,12 @@ Return JSON strictly matching this schema:
       // Restore personal fields
       personalFields.forEach((id) => {
         const el = $(`#${id}`);
-        if (el && state.personal[id]) el.value = state.personal[id];
+        if (el) el.value = state.personal[id] || '';
       });
 
       // Restore other fields
-      if ($('#languages')) $('#languages').value = state.languages;
-      if ($('#interests')) $('#interests').value = state.interests;
+      if ($('#languages')) $('#languages').value = state.languages || '';
+      if ($('#interests')) $('#interests').value = state.interests || '';
 
       // Restore theme
       if (state.theme === 'light') document.documentElement.setAttribute('data-theme', 'light');
@@ -1306,9 +1353,10 @@ Return JSON strictly matching this schema:
       renderProjects();
       renderCerts();
       renderSkillTags();
+      render();
       applyZoom();
     } catch (e) {
-      applyDataToForm(DEMO_DATA);
+      resetForm(false);
     }
   }
 
@@ -1632,17 +1680,38 @@ Node.js, Python, React, Docker, Kubernetes, AWS, PostgreSQL, Microservices, C++,
     const keyInput = $(`#${inputId}`);
     const val = keyInput ? keyInput.value.trim() : '';
     if (!val || val.startsWith('•')) {
-      showToast('Paste your full OpenRouter API key to save it', 'error');
+      showToast('⚠️ Please paste your full OpenRouter API key to save it.', 'error');
+      if (keyInput) {
+        keyInput.focus();
+        keyInput.classList.add('highlight-pulse');
+        setTimeout(() => keyInput.classList.remove('highlight-pulse'), 2000);
+      }
+      return;
+    }
+    if (val.length < 10) {
+      showToast('⚠️ Invalid API key format. OpenRouter keys are typically longer.', 'error');
+      if (keyInput) keyInput.focus();
       return;
     }
     localStorage.setItem('rf_openrouter_key', val);
     if (keyInput) keyInput.value = '••••••••••••••••';
     updateKeyStatusBadge();
-    showToast('✅ API key saved to browser storage!', 'success');
+    showToast('✅ API Key saved successfully! AI features unlocked.', 'success');
   }
 
   if (saveAiKeyBtn) saveAiKeyBtn.addEventListener('click', () => saveApiKey('aiApiKeyInput'));
   if (settingsSaveKeyBtn) settingsSaveKeyBtn.addEventListener('click', () => saveApiKey('settingsApiKeyInput'));
+
+  // Personal Email Blur Format Validation
+  const emailInput = $('#email');
+  if (emailInput) {
+    emailInput.addEventListener('blur', () => {
+      const val = emailInput.value.trim();
+      if (val && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) {
+        showToast('⚠️ Please enter a valid email format (e.g. alex@example.com).', 'error');
+      }
+    });
+  }
 
   // Initialize banner state
   updateApiKeyBanner();

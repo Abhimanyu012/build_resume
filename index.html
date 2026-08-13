@@ -90,7 +90,7 @@
         <div class="ats-audit-header" id="atsAuditHeader">
           <div class="ats-score-title-group">
             <span class="ats-card-label">CONTENT QUALITY</span>
-            <span class="ats-score-badge" id="atsScoreBadge">55%</span>
+            <span class="ats-score-badge" id="atsScoreBadge">0%</span>
             <button class="ats-toggle-btn" id="atsToggleBtn" type="button" title="Toggle audit details">
               <span>Details</span>
               <svg class="chevron-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
@@ -102,44 +102,45 @@
           </button>
         </div>
         <div class="ats-progress-track">
-          <div class="ats-progress-fill" id="atsProgressFill" style="width: 55%;"></div>
+          <div class="ats-progress-fill" id="atsProgressFill" style="width: 0%;"></div>
         </div>
         <div class="ats-audit-checklist" id="atsAuditChecklist">
           <div class="ats-check-item">
             <div class="ats-check-left">
-              <span class="ats-check-icon check" id="iconAtsParse">✓</span>
+              <span class="ats-check-icon cross" id="iconAtsParse">—</span>
               <span class="ats-check-text">ATS Parse Rate</span>
             </div>
-            <span class="ats-check-tag tag-success" id="tagAtsParse">No issues</span>
+            <span class="ats-check-tag tag-warning" id="tagAtsParse">No Data</span>
           </div>
           <div class="ats-check-item">
             <div class="ats-check-left">
-              <span class="ats-check-icon cross" id="iconMetrics">✕</span>
+              <span class="ats-check-icon cross" id="iconMetrics">—</span>
               <span class="ats-check-text">Quantifying Impact</span>
             </div>
-            <span class="ats-check-tag tag-warning" id="tagMetrics">1 issue</span>
+            <span class="ats-check-tag tag-warning" id="tagMetrics">No Data</span>
           </div>
           <div class="ats-check-item">
             <div class="ats-check-left">
-              <span class="ats-check-icon cross" id="iconRepetition">✕</span>
+              <span class="ats-check-icon cross" id="iconRepetition">—</span>
               <span class="ats-check-text">Repetition</span>
             </div>
-            <span class="ats-check-tag tag-warning" id="tagRepetition">1 issue</span>
+            <span class="ats-check-tag tag-warning" id="tagRepetition">No Data</span>
           </div>
           <div class="ats-check-item">
             <div class="ats-check-left">
-              <span class="ats-check-icon cross" id="iconGrammar">✕</span>
+              <span class="ats-check-icon cross" id="iconGrammar">—</span>
               <span class="ats-check-text">Spelling & Grammar</span>
             </div>
-            <span class="ats-check-tag tag-warning" id="tagGrammar">2 issues</span>
+            <span class="ats-check-tag tag-warning" id="tagGrammar">No Data</span>
           </div>
           <div class="ats-check-item">
             <div class="ats-check-left">
-              <span class="ats-check-icon check" id="iconBullets">✓</span>
+              <span class="ats-check-icon cross" id="iconBullets">—</span>
               <span class="ats-check-text">Bullets Consistency</span>
             </div>
-            <span class="ats-check-tag tag-success" id="tagBullets">Consistent</span>
+            <span class="ats-check-tag tag-warning" id="tagBullets">No Data</span>
           </div>
+        </div>
         </div>
       </div>
 
@@ -345,8 +346,65 @@
         </div>
       </div>
       <div class="preview-viewport" id="previewViewport">
-        <div class="resume-paper" id="resumePaper">
-          <!-- Resume content rendered by JS -->
+        <div class="resume-paper" id="resumePaper" data-template="modern">
+          <div class="resume-empty">
+            <div class="empty-card">
+              <div class="empty-header">
+                <span class="empty-badge">Executive Resume Builder</span>
+                <h3 class="empty-title">Welcome to RésuméForge</h3>
+                <p class="empty-sub">Create high-impact, ATS-optimized executive resumes in minutes with real-time preview and AI enhancement.</p>
+              </div>
+              
+              <div class="empty-steps-grid">
+                <div class="empty-step-card">
+                  <div class="empty-step-num">1</div>
+                  <div class="empty-step-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                  </div>
+                  <h4>1. Fill or Import</h4>
+                  <p>Use the editor panel on the left, or upload your PDF/DOCX resume file.</p>
+                </div>
+
+                <div class="empty-step-card">
+                  <div class="empty-step-num">2</div>
+                  <div class="empty-step-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v8M12 18v4M4.93 4.93l5.66 5.66M13.41 13.41l5.66 5.66M2 12h8M18 12h4M4.93 19.07l5.66-5.66M13.41 10.59l5.66-5.66"/></svg>
+                  </div>
+                  <h4>2. AI Enhance</h4>
+                  <p>Rewrite bullet points with metric-rich statements & fix fluff automatically.</p>
+                </div>
+
+                <div class="empty-step-card">
+                  <div class="empty-step-num">3</div>
+                  <div class="empty-step-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                  </div>
+                  <h4>3. Export PDF</h4>
+                  <p>Choose between Modern, Classic, Minimal, or Compact templates and download PDF.</p>
+                </div>
+              </div>
+
+              <!-- ⚠️ IMPORTANT API KEY NOTICE AT HOME DEFAULT PLACE -->
+              <div class="empty-important-notice">
+                <div class="notice-badge-tag">⚠️ IMPORTANT NOTICE</div>
+                <div class="notice-body-text">
+                  <p>AI features require a free <strong>OpenRouter API Key</strong>. Enter your key in <a href="#" id="emptyNoticeSettingsLink" class="empty-settings-link">Settings</a> to unlock AI Content Enhancement & Resume File Parsing.</p>
+                  <a href="https://openrouter.ai/keys" target="_blank" rel="noopener noreferrer" class="openrouter-link-btn">Get Free Key at openrouter.ai/keys →</a>
+                </div>
+              </div>
+
+              <div class="empty-actions">
+                <button class="empty-btn-primary" id="emptyDemoBtn" type="button">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                  <span>Load Sample Data</span>
+                </button>
+                <button class="empty-btn-secondary" id="emptyImportBtn" type="button">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                  <span>Import Resume File</span>
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
