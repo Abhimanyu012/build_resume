@@ -57,7 +57,6 @@
 
   const resumePaper = $('#resumePaper');
   const tabBtns = $$('.tab-btn');
-  const tabInk = $('#tabInk');
   const tplBtns = $$('.tpl-btn');
 
   // ── Theme Toggle ──
@@ -72,24 +71,14 @@
   });
 
   // ── Tab Navigation ──
-  function moveInk(btn) {
-    tabInk.style.left = btn.offsetLeft + 'px';
-    tabInk.style.width = btn.offsetWidth + 'px';
-  }
-
   tabBtns.forEach((btn) => {
     btn.addEventListener('click', () => {
       tabBtns.forEach((b) => b.classList.remove('active'));
       btn.classList.add('active');
       $$('.tab-content').forEach((c) => c.classList.remove('active'));
       $(`#tab-content-${btn.dataset.tab}`).classList.add('active');
-      moveInk(btn);
     });
   });
-
-  // Init ink position
-  setTimeout(() => moveInk($('.tab-btn.active')), 50);
-  window.addEventListener('resize', () => moveInk($('.tab-btn.active')));
 
   // ── Template Switcher ──
   tplBtns.forEach((btn) => {
@@ -126,6 +115,7 @@
     if (!dragging) return;
     const w = Math.max(360, Math.min(600, e.clientX));
     editorPanel.style.width = w + 'px';
+    if (typeof autoScaleViewport === 'function') autoScaleViewport();
   });
   document.addEventListener('mouseup', () => {
     if (dragging) {
@@ -876,6 +866,9 @@
 
     // Update UI elements
     scoreBadge.textContent = `${score}%`;
+    const progressFill = $('#atsProgressFill');
+    if (progressFill) progressFill.style.width = `${score}%`;
+
     if (score >= 90) {
       scoreBadge.classList.add('high');
     } else {
@@ -1098,6 +1091,16 @@ Return JSON strictly matching this schema:
   const cardFixFluffBtn = $('#cardFixFluffBtn');
   if (cardFixFluffBtn) cardFixFluffBtn.addEventListener('click', fixAllFluffWithAI);
 
+  // Attach ATS Audit Toggle Listener
+  const atsAuditHeader = $('#atsAuditHeader');
+  const atsAuditCard = $('#atsAuditCard');
+  if (atsAuditHeader && atsAuditCard) {
+    atsAuditHeader.addEventListener('click', (e) => {
+      if (e.target.closest('#cardFixFluffBtn')) return;
+      atsAuditCard.classList.toggle('collapsed');
+    });
+  }
+
   // ── Export PDF & Print Event Handling ──
   window.addEventListener('beforeprint', () => {
     const mobileBar = $('.mobile-view-bar');
@@ -1232,17 +1235,19 @@ Return JSON strictly matching this schema:
   const btnEdit = $('#mobileBtnEdit');
   const btnPreview = $('#mobileBtnPreview');
 
-  function autoScaleMobile() {
-    if (window.innerWidth <= 860) {
-      const viewport = $('#previewViewport');
-      if (!viewport) return;
-      const availableW = viewport.clientWidth - 24;
-      const paperW = 794; // 210mm in px at 96dpi
-      const calculatedScale = Math.min(Math.max(availableW / paperW, 0.35), 0.95);
+  function autoScaleViewport() {
+    const viewport = $('#previewViewport');
+    if (!viewport || !resumePaper) return;
+    const availableW = viewport.clientWidth - 32;
+    const paperW = 794; // 210mm standard A4 width in px
+    if (availableW < paperW) {
+      const calculatedScale = Math.min(Math.max(availableW / paperW, 0.32), 1.0);
       state.zoom = Math.round(calculatedScale * 100);
       applyZoom();
     }
   }
+
+  window.addEventListener('resize', autoScaleViewport);
 
   function setMobileView(view) {
     state.mobileView = view;
@@ -1252,7 +1257,7 @@ Return JSON strictly matching this schema:
     if (btnPreview) btnPreview.classList.toggle('active', view === 'preview');
 
     if (view === 'preview') {
-      setTimeout(autoScaleMobile, 50);
+      setTimeout(autoScaleViewport, 50);
     }
   }
 

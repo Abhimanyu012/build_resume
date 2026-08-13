@@ -85,22 +85,28 @@
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
           <span>Extras</span>
         </button>
-        <div class="tab-ink" id="tabInk"></div>
       </div>
 
       <!-- ░░ ATS CONTENT QUALITY AUDIT CARD ░░ -->
-      <div class="ats-audit-card" id="atsAuditCard">
-        <div class="ats-audit-header">
+      <div class="ats-audit-card collapsed" id="atsAuditCard">
+        <div class="ats-audit-header" id="atsAuditHeader">
           <div class="ats-score-title-group">
-            <span class="ats-card-label">CONTENT</span>
+            <span class="ats-card-label">CONTENT QUALITY</span>
             <span class="ats-score-badge" id="atsScoreBadge">55%</span>
+            <button class="ats-toggle-btn" id="atsToggleBtn" type="button" title="Toggle audit details">
+              <span>Details</span>
+              <svg class="chevron-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
           </div>
           <button class="btn-fix-all-fluff" id="cardFixFluffBtn" type="button" title="Fix fluff, repetition, spelling and metrics with AI">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2v8M12 18v4M4.93 4.93l5.66 5.66M13.41 13.41l5.66 5.66M2 12h8M18 12h4M4.93 19.07l5.66-5.66M13.41 10.59l5.66-5.66"/></svg>
             <span>✨ Fix All Fluff</span>
           </button>
         </div>
-        <div class="ats-audit-checklist">
+        <div class="ats-progress-track">
+          <div class="ats-progress-fill" id="atsProgressFill" style="width: 55%;"></div>
+        </div>
+        <div class="ats-audit-checklist" id="atsAuditChecklist">
           <div class="ats-check-item">
             <div class="ats-check-left">
               <span class="ats-check-icon check" id="iconAtsParse">✓</span>
@@ -142,7 +148,6 @@
       <!-- Tab contents -->
       <div class="tab-content-wrap">
 
-        <!-- PERSONAL -->
         <section class="tab-content active" id="tab-content-personal">
           <div class="section-header">
             <h2 class="section-title">Personal Details</h2>
@@ -153,14 +158,16 @@
               <label class="form-label" for="fullName">Full Name</label>
               <input class="form-input" id="fullName" type="text" placeholder="e.g. Alexandra Chen" autocomplete="off" />
             </div>
-            <div class="form-group">
+            <div class="form-group full">
               <label class="form-label" for="jobTitle">Job Title</label>
               <input class="form-input" id="jobTitle" type="text" placeholder="e.g. Senior Product Designer" />
             </div>
-            <div class="form-group">
+            <div class="form-group full">
               <label class="form-label" for="email">Email</label>
               <input class="form-input" id="email" type="email" placeholder="you@example.com" />
             </div>
+          </div>
+          <div class="form-grid two-col" style="margin-top:12px">
             <div class="form-group">
               <label class="form-label" for="phone">Phone</label>
               <input class="form-input" id="phone" type="tel" placeholder="+1 (555) 000-0000" />
@@ -169,15 +176,17 @@
               <label class="form-label" for="location">Location</label>
               <input class="form-input" id="location" type="text" placeholder="City, Country" />
             </div>
-            <div class="form-group">
+          </div>
+          <div class="form-grid" style="margin-top:12px">
+            <div class="form-group full">
               <label class="form-label" for="website">Portfolio / Website</label>
               <input class="form-input" id="website" type="url" placeholder="https://yoursite.com" />
             </div>
-            <div class="form-group">
+            <div class="form-group full">
               <label class="form-label" for="linkedin">LinkedIn</label>
               <input class="form-input" id="linkedin" type="text" placeholder="linkedin.com/in/yourname" />
             </div>
-            <div class="form-group">
+            <div class="form-group full">
               <label class="form-label" for="github">GitHub</label>
               <input class="form-input" id="github" type="text" placeholder="github.com/yourusername" />
             </div>
