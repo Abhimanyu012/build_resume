@@ -134,6 +134,7 @@
   // ── Dynamic Entry Helpers ──
   let entryIdCounter = Date.now();
   function uid() { return ++entryIdCounter; }
+  function generateId() { return uid(); }
 
   function createEntryCard(fields, data, onUpdate, onRemove) {
     const card = document.createElement('div');
@@ -342,10 +343,13 @@
 
   // ── Escape HTML ──
   function esc(s) {
-    if (!s) return '';
-    const d = document.createElement('div');
-    d.textContent = s;
-    return d.innerHTML;
+    if (s === null || s === undefined) return '';
+    return String(s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
   }
 
   // ── Render Resume ──
@@ -389,34 +393,42 @@
     }
 
     let expHTML = '';
-    if (state.experience.length) {
+    if (state.experience && state.experience.length) {
       expHTML = `<div class="r-section"><div class="r-section-title">Experience</div>`;
       state.experience.forEach((e) => {
-        const end = e.current ? 'Present' : esc(e.endDate);
+        const title = esc(e.role || e.title || 'Role');
+        const company = esc(e.company || '');
+        const startDate = esc(e.startDate || '');
+        const endDate = e.current ? 'Present' : esc(e.endDate || '');
+        const dateStr = startDate || endDate ? `${startDate}${endDate ? ' &mdash; ' + endDate : ''}` : esc(e.dates || '');
+        const descStr = e.description || e.desc || '';
+        
         expHTML += `<div class="r-entry">
-          <div class="r-entry-header"><span class="r-entry-title">${esc(e.role) || 'Role'}</span><span class="r-entry-date">${esc(e.startDate)}${end ? ' &mdash; ' + end : ''}</span></div>
-          <div class="r-entry-sub">${esc(e.company)}${e.location ? ' &middot; ' + esc(e.location) : ''}</div>
-          ${e.description ? `<div class="r-entry-desc">${esc(e.description).replace(/\n/g, '<br>')}</div>` : ''}
+          <div class="r-entry-header"><span class="r-entry-title">${title}</span>${dateStr ? `<span class="r-entry-date">${dateStr}</span>` : ''}</div>
+          ${company || e.location ? `<div class="r-entry-sub">${company}${e.location ? (company ? ' &middot; ' : '') + esc(e.location) : ''}</div>` : ''}
+          ${descStr ? `<div class="r-entry-desc">${esc(descStr).replace(/\n/g, '<br>')}</div>` : ''}
         </div>`;
       });
       expHTML += `</div>`;
     }
 
     let projHTML = '';
-    if (state.projects.length) {
+    if (state.projects && state.projects.length) {
       projHTML = `<div class="r-section"><div class="r-section-title">Projects</div>`;
       state.projects.forEach((pr) => {
+        const name = esc(pr.name || pr.title || 'Project');
+        const descStr = pr.description || pr.desc || '';
         projHTML += `<div class="r-entry">
-          <div class="r-entry-header"><span class="r-entry-title">${esc(pr.name) || 'Project'}</span>${pr.tech ? `<span class="r-entry-date">${esc(pr.tech)}</span>` : ''}</div>
+          <div class="r-entry-header"><span class="r-entry-title">${name}</span>${pr.tech ? `<span class="r-entry-date">${esc(pr.tech)}</span>` : ''}</div>
           ${pr.link ? `<div class="r-entry-sub">${esc(pr.link)}</div>` : ''}
-          ${pr.description ? `<div class="r-entry-desc">${esc(pr.description).replace(/\n/g, '<br>')}</div>` : ''}
+          ${descStr ? `<div class="r-entry-desc">${esc(descStr).replace(/\n/g, '<br>')}</div>` : ''}
         </div>`;
       });
       projHTML += `</div>`;
     }
 
     let skillsHTML = '';
-    if (state.skills.length) {
+    if (state.skills && state.skills.length) {
       skillsHTML = `<div class="r-section"><div class="r-section-title">Skills & Expertise</div><div class="r-skills-grid">`;
       state.skills.forEach((sk) => {
         const lvl = (sk.level || 'intermediate').toLowerCase();
@@ -426,15 +438,21 @@
     }
 
     let eduHTML = '';
-    if (state.education.length) {
+    if (state.education && state.education.length) {
       eduHTML = `<div class="r-section"><div class="r-section-title">Education</div>`;
       state.education.forEach((e) => {
-        const end = e.current ? 'Present' : esc(e.endDate);
+        const degree = esc(e.degree || 'Degree');
+        const school = esc(e.school || '');
+        const startDate = esc(e.startDate || '');
+        const endDate = e.current ? 'Present' : esc(e.endDate || '');
+        const dateStr = startDate || endDate ? `${startDate}${endDate ? ' &mdash; ' + endDate : ''}` : esc(e.dates || '');
+        const descStr = e.description || e.desc || '';
+
         eduHTML += `<div class="r-entry">
-          <div class="r-entry-header"><span class="r-entry-title">${esc(e.degree) || 'Degree'}</span><span class="r-entry-date">${esc(e.startDate)}${end ? ' &mdash; ' + end : ''}</span></div>
-          <div class="r-entry-sub">${esc(e.school)}</div>
+          <div class="r-entry-header"><span class="r-entry-title">${degree}</span>${dateStr ? `<span class="r-entry-date">${dateStr}</span>` : ''}</div>
+          ${school ? `<div class="r-entry-sub">${school}</div>` : ''}
           ${e.gpa ? `<div class="r-entry-desc">GPA: ${esc(e.gpa)}</div>` : ''}
-          ${e.description ? `<div class="r-entry-desc">${esc(e.description)}</div>` : ''}
+          ${descStr ? `<div class="r-entry-desc">${esc(descStr).replace(/\n/g, '<br>')}</div>` : ''}
         </div>`;
       });
       eduHTML += `</div>`;
@@ -1115,36 +1133,47 @@
       if (dateMatch || !currentItem) {
         if (currentItem) items.push(currentItem);
         
-        let title = line;
-        let company = 'Company / Organization';
-        let dates = dateMatch ? dateMatch[0] : '2020 - Present';
+        let role = line;
+        let company = 'Company Name';
+        let startDate = '2020';
+        let endDate = 'Present';
+        let current = false;
         
+        if (dateMatch) {
+          const dateParts = dateMatch[0].split(/[-–—to]+/i).map(s => s.trim());
+          startDate = dateParts[0] || '2020';
+          endDate = dateParts[1] || 'Present';
+          if (/present|current/i.test(endDate)) current = true;
+        }
+
         if (line.includes(' at ')) {
           const parts = line.split(' at ');
-          title = parts[0].trim();
+          role = parts[0].trim();
           company = parts[1].replace(dateRegex, '').trim();
         } else if (line.includes('|')) {
           const parts = line.split('|');
-          title = parts[0].trim();
+          role = parts[0].trim();
           company = parts[1].replace(dateRegex, '').trim();
         } else if (line.includes(' - ') && !dateMatch) {
           const parts = line.split(' - ');
-          title = parts[0].trim();
+          role = parts[0].trim();
           company = parts[1].trim();
         }
 
         currentItem = {
           id: generateId(),
-          title: title.replace(dateRegex, '').trim() || 'Role / Position',
+          role: role.replace(dateRegex, '').trim() || 'Role / Position',
           company: company || 'Company Name',
-          dates: dates,
+          startDate: startDate,
+          endDate: endDate,
+          current: current,
           location: '',
-          desc: ''
+          description: ''
         };
       } else {
         if (currentItem) {
-          if (currentItem.desc) currentItem.desc += '\n' + line;
-          else currentItem.desc = line;
+          if (currentItem.description) currentItem.description += '\n' + line;
+          else currentItem.description = line;
         }
       }
     });
@@ -1161,19 +1190,25 @@
     eduLines.forEach((line) => {
       if (/degree|bachelor|master|b\.s|m\.s|phd|diploma|associate|university|college|school/i.test(line) || !currentItem) {
         if (currentItem) items.push(currentItem);
-        const dateMatch = line.match(/\b(19|20)\d{2}\b.*\b(19|20)\d{2}\b|\b(19|20)\d{2}\b/);
+        const dateMatch = line.match(/\b(19|20)\d{2}\b/g);
+        const startDate = dateMatch && dateMatch[0] ? dateMatch[0] : '2016';
+        const endDate = dateMatch && dateMatch[1] ? dateMatch[1] : '2020';
+
         currentItem = {
           id: generateId(),
-          degree: line.replace(/\b(19|20)\d{2}\b/g, '').trim(),
+          degree: line.replace(/\b(19|20)\d{2}\b/g, '').trim() || 'Degree / Diploma',
           school: 'University / Institution',
-          dates: dateMatch ? dateMatch[0] : '2016 - 2020',
-          desc: ''
+          startDate: startDate,
+          endDate: endDate,
+          current: false,
+          gpa: '',
+          description: ''
         };
       } else if (currentItem) {
         if (line.toLowerCase().includes('university') || line.toLowerCase().includes('college') || line.toLowerCase().includes('institute')) {
           currentItem.school = line;
         } else {
-          currentItem.desc += (currentItem.desc ? ' ' : '') + line;
+          currentItem.description += (currentItem.description ? ' ' : '') + line;
         }
       }
     });
@@ -1194,10 +1229,11 @@
           id: generateId(),
           name: line.trim(),
           tech: '',
-          desc: ''
+          link: '',
+          description: ''
         };
       } else if (currentItem) {
-        currentItem.desc += (currentItem.desc ? '\n' : '') + line;
+        currentItem.description += (currentItem.description ? '\n' : '') + line;
       }
     });
 
@@ -1240,6 +1276,8 @@
 
     return result;
   }
+
+  window.parseAndPopulateText = parseAndPopulateText;
 
   // ── Init ──
   load();
