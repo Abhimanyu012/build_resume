@@ -1102,9 +1102,30 @@ Return JSON strictly matching this schema:
   }
 
   // ── Export PDF & Print Event Handling ──
-  window.addEventListener('beforeprint', () => {
+  function hideAllFloatingUI() {
+    const fabDock = $('#fabDock');
     const mobileBar = $('.mobile-view-bar');
-    if (mobileBar) mobileBar.style.display = 'none';
+    const settingsOverlay = $('#settingsOverlay');
+    const importModal = $('#importModal');
+    const toastWrap = $('#toastWrap');
+    if (fabDock) fabDock.style.setProperty('display', 'none', 'important');
+    if (mobileBar) mobileBar.style.setProperty('display', 'none', 'important');
+    if (settingsOverlay) settingsOverlay.style.setProperty('display', 'none', 'important');
+    if (importModal) importModal.style.setProperty('display', 'none', 'important');
+    if (toastWrap) toastWrap.style.setProperty('display', 'none', 'important');
+  }
+
+  function restoreAllFloatingUI() {
+    const fabDock = $('#fabDock');
+    const mobileBar = $('.mobile-view-bar');
+    const toastWrap = $('#toastWrap');
+    if (fabDock) fabDock.style.display = '';
+    if (mobileBar) mobileBar.style.display = '';
+    if (toastWrap) toastWrap.style.display = '';
+  }
+
+  window.addEventListener('beforeprint', () => {
+    hideAllFloatingUI();
     if (resumePaper && resumePaper.scrollHeight > 1050) {
       resumePaper.classList.add('one-page-fit');
     }
@@ -1112,8 +1133,7 @@ Return JSON strictly matching this schema:
   });
 
   window.addEventListener('afterprint', () => {
-    const mobileBar = $('.mobile-view-bar');
-    if (mobileBar) mobileBar.style.display = '';
+    restoreAllFloatingUI();
     if (resumePaper) resumePaper.classList.remove('one-page-fit');
     applyZoom();
   });
@@ -1122,10 +1142,9 @@ Return JSON strictly matching this schema:
     const prevZoom = state.zoom;
     const previewPanel = $('.preview-panel');
     const previewViewport = $('#previewViewport');
-    const mobileBar = $('.mobile-view-bar');
 
-    // Hide UI elements before print
-    if (mobileBar) mobileBar.style.display = 'none';
+    // Hide all floating UI elements before print
+    hideAllFloatingUI();
 
     // Auto-enable 1-page compact fit if paper height exceeds single A4 page height
     const paperHeight = resumePaper ? resumePaper.scrollHeight : 0;
@@ -1151,7 +1170,7 @@ Return JSON strictly matching this schema:
         if (needsOnePageFit && resumePaper) {
           resumePaper.classList.remove('one-page-fit');
         }
-        if (mobileBar) mobileBar.style.display = '';
+        restoreAllFloatingUI();
       }, 300);
     }, 50);
 
@@ -1386,22 +1405,66 @@ Node.js, Python, React, Docker, Kubernetes, AWS, PostgreSQL, Microservices, C++,
     });
   }
 
-  // Save API Key to localStorage
-  const saveAiKeyBtn = $('#saveAiKeyBtn');
-  if (saveAiKeyBtn) {
-    saveAiKeyBtn.addEventListener('click', () => {
-      const keyInput = $('#aiApiKeyInput');
-      const val = keyInput ? keyInput.value.trim() : '';
-      if (!val || val.startsWith('•')) {
-        showToast('Paste your full OpenRouter API key to save it', 'error');
-        return;
-      }
-      localStorage.setItem('rf_openrouter_key', val);
-      if (keyInput) keyInput.value = '••••••••••••••••';
-      updateKeyStatusBadge();
-      showToast('✅ API key saved to browser storage!', 'success');
+  // Settings Modal Handlers
+  const fabSettingsBtn = $('#fabSettingsBtn');
+  const settingsOverlay = $('#settingsOverlay');
+  const closeSettingsBtn = $('#closeSettingsBtn');
+  const settingsSaveKeyBtn = $('#settingsSaveKeyBtn');
+
+  function openSettingsModal() {
+    if (!settingsOverlay) return;
+    settingsOverlay.classList.add('open');
+    settingsOverlay.style.display = 'flex';
+    updateKeyStatusBadge();
+  }
+
+  function hideSettingsModal() {
+    if (!settingsOverlay) return;
+    settingsOverlay.classList.remove('open');
+    settingsOverlay.style.display = 'none';
+  }
+
+  if (fabSettingsBtn) fabSettingsBtn.addEventListener('click', openSettingsModal);
+  if (closeSettingsBtn) closeSettingsBtn.addEventListener('click', hideSettingsModal);
+  if (settingsOverlay) {
+    settingsOverlay.addEventListener('click', (e) => {
+      if (e.target === settingsOverlay) hideSettingsModal();
     });
   }
+
+  function updateKeyStatusBadge() {
+    const key = getAIKey();
+    const modalBadge = $('#aiKeyStatusBadge');
+    const settingsStatus = $('#settingsKeyStatus');
+    const hasKey = Boolean(key && key.length > 5);
+
+    if (modalBadge) {
+      modalBadge.textContent = hasKey ? '✓ Key Active' : 'No Key Set';
+      modalBadge.style.color = hasKey ? '#10b981' : 'var(--text-3)';
+    }
+    if (settingsStatus) {
+      settingsStatus.textContent = hasKey ? '✓ API Key Saved & Active' : 'No key saved. AI operations will use default limits.';
+      settingsStatus.className = `settings-key-status ${hasKey ? 'active' : ''}`;
+    }
+  }
+
+  // Save API Key to localStorage
+  const saveAiKeyBtn = $('#saveAiKeyBtn');
+  function saveApiKey(inputId) {
+    const keyInput = $(`#${inputId}`);
+    const val = keyInput ? keyInput.value.trim() : '';
+    if (!val || val.startsWith('•')) {
+      showToast('Paste your full OpenRouter API key to save it', 'error');
+      return;
+    }
+    localStorage.setItem('rf_openrouter_key', val);
+    if (keyInput) keyInput.value = '••••••••••••••••';
+    updateKeyStatusBadge();
+    showToast('✅ API key saved to browser storage!', 'success');
+  }
+
+  if (saveAiKeyBtn) saveAiKeyBtn.addEventListener('click', () => saveApiKey('aiApiKeyInput'));
+  if (settingsSaveKeyBtn) settingsSaveKeyBtn.addEventListener('click', () => saveApiKey('settingsApiKeyInput'));
 
   // Modal Tab Switching
   if (tabBtnUpload && tabBtnPaste) {

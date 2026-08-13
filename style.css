@@ -755,11 +755,19 @@ input,textarea,select{font-family:inherit;color:inherit}
   .preview-toolbar,
   .ambient-bg,
   .toast-wrap,
+  #toastWrap,
   .mobile-view-bar,
+  #mobileViewBar,
   .mobile-view-btn,
   .modal-backdrop,
+  #importModal,
   .modal-card,
   .ai-loading-overlay,
+  .fab-dock,
+  #fabDock,
+  #fabDock *,
+  .settings-overlay,
+  #settingsOverlay,
   button:not(.resume-paper button) {
     display: none !important;
     opacity: 0 !important;
@@ -770,6 +778,9 @@ input,textarea,select{font-family:inherit;color:inherit}
     pointer-events: none !important;
     top: -9999px !important;
     left: -9999px !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
   }
 
   .app-shell, .preview-panel, .preview-viewport {
@@ -1503,8 +1514,149 @@ input,textarea,select{font-family:inherit;color:inherit}
   .modal-footer-actions {
     flex-direction: column;
   }
-  .modal-footer-actions button {
-    width: 100%;
-    justify-content: center;
+}
+
+/* ═══ FLOATING ACTION DOCK (BOTTOM RIGHT) ═══ */
+.fab-dock {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 990;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  background: var(--surface);
+  border: 1px solid var(--border-2);
+  border-radius: 40px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 1px var(--accent-glow);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  transition: all 0.3s ease;
+}
+.fab-dock:hover {
+  border-color: rgba(200, 149, 108, 0.4);
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.5), 0 0 16px var(--accent-glow);
+}
+.fab-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 20px;
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: var(--text-2);
+  background: transparent;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+.fab-item:hover {
+  color: var(--text);
+  background: var(--surface-2);
+  border-color: var(--border-2);
+  transform: translateY(-1px);
+}
+.fab-item.fab-ai {
+  background: var(--accent-glow);
+  color: var(--accent);
+  border-color: rgba(200, 149, 108, 0.3);
+}
+.fab-item.fab-ai:hover {
+  background: var(--accent);
+  color: #ffffff;
+  box-shadow: 0 4px 14px var(--accent-glow);
+}
+
+/* ═══ SETTINGS OVERLAY ═══ */
+.settings-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(10, 10, 14, 0.82);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.settings-overlay.open {
+  display: flex !important;
+  opacity: 1 !important;
+}
+.settings-card {
+  width: 100%;
+  max-width: 480px;
+  background: var(--surface);
+  border: 1px solid var(--border-2);
+  border-radius: 20px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.settings-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 24px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-2);
+}
+.settings-title {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+.settings-body {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.settings-hint {
+  font-size: 0.78rem;
+  color: var(--text-3);
+  margin-top: 4px;
+  line-height: 1.45;
+}
+.settings-hint a {
+  color: var(--accent);
+  text-decoration: underline;
+}
+.settings-key-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+.settings-key-status {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-3);
+  margin-top: 6px;
+  display: block;
+}
+.settings-key-status.active {
+  color: #10b981;
+}
+
+@media (max-width: 860px) {
+  .fab-dock {
+    bottom: 74px;
+    right: 12px;
+    padding: 4px 8px;
+  }
+  .fab-item span {
+    display: none;
+  }
+  .fab-item {
+    padding: 8px;
+    border-radius: 50%;
   }
 }
