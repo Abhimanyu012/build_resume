@@ -37,6 +37,10 @@
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
           <span>Import Resume</span>
         </button>
+        <button class="btn-secondary-nav btn-ai-fluff-nav" id="navFixFluffBtn" title="Fix all fluff, grammar, repetition and metrics with AI">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2v8M12 18v4M4.93 4.93l5.66 5.66M13.41 13.41l5.66 5.66M2 12h8M18 12h4M4.93 19.07l5.66-5.66M13.41 10.59l5.66-5.66"/></svg>
+          <span>✨ Fix All Fluff</span>
+        </button>
         <button class="btn-secondary-nav" id="resetBtn" title="Reset and clear all form fields">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
           <span>Reset Form</span>
@@ -84,6 +88,57 @@
         <div class="tab-ink" id="tabInk"></div>
       </div>
 
+      <!-- ░░ ATS CONTENT QUALITY AUDIT CARD ░░ -->
+      <div class="ats-audit-card" id="atsAuditCard">
+        <div class="ats-audit-header">
+          <div class="ats-score-title-group">
+            <span class="ats-card-label">CONTENT</span>
+            <span class="ats-score-badge" id="atsScoreBadge">55%</span>
+          </div>
+          <button class="btn-fix-all-fluff" id="cardFixFluffBtn" type="button" title="Fix fluff, repetition, spelling and metrics with AI">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2v8M12 18v4M4.93 4.93l5.66 5.66M13.41 13.41l5.66 5.66M2 12h8M18 12h4M4.93 19.07l5.66-5.66M13.41 10.59l5.66-5.66"/></svg>
+            <span>✨ Fix All Fluff</span>
+          </button>
+        </div>
+        <div class="ats-audit-checklist">
+          <div class="ats-check-item">
+            <div class="ats-check-left">
+              <span class="ats-check-icon check" id="iconAtsParse">✓</span>
+              <span class="ats-check-text">ATS Parse Rate</span>
+            </div>
+            <span class="ats-check-tag tag-success" id="tagAtsParse">No issues</span>
+          </div>
+          <div class="ats-check-item">
+            <div class="ats-check-left">
+              <span class="ats-check-icon cross" id="iconMetrics">✕</span>
+              <span class="ats-check-text">Quantifying Impact</span>
+            </div>
+            <span class="ats-check-tag tag-warning" id="tagMetrics">1 issue</span>
+          </div>
+          <div class="ats-check-item">
+            <div class="ats-check-left">
+              <span class="ats-check-icon cross" id="iconRepetition">✕</span>
+              <span class="ats-check-text">Repetition</span>
+            </div>
+            <span class="ats-check-tag tag-warning" id="tagRepetition">1 issue</span>
+          </div>
+          <div class="ats-check-item">
+            <div class="ats-check-left">
+              <span class="ats-check-icon cross" id="iconGrammar">✕</span>
+              <span class="ats-check-text">Spelling & Grammar</span>
+            </div>
+            <span class="ats-check-tag tag-warning" id="tagGrammar">2 issues</span>
+          </div>
+          <div class="ats-check-item">
+            <div class="ats-check-left">
+              <span class="ats-check-icon check" id="iconBullets">✓</span>
+              <span class="ats-check-text">Bullets Consistency</span>
+            </div>
+            <span class="ats-check-tag tag-success" id="tagBullets">Consistent</span>
+          </div>
+        </div>
+      </div>
+
       <!-- Tab contents -->
       <div class="tab-content-wrap">
 
@@ -127,7 +182,13 @@
               <input class="form-input" id="github" type="text" placeholder="github.com/yourusername" />
             </div>
             <div class="form-group full">
-              <label class="form-label" for="summary">Professional Summary</label>
+              <div class="label-with-ai-row">
+                <label class="form-label" for="summary">Professional Summary</label>
+                <button class="btn-ai-enhance-inline" id="enhanceSummaryBtn" type="button" title="Enhance summary with AI">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2v8M12 18v4M4.93 4.93l5.66 5.66M13.41 13.41l5.66 5.66M2 12h8M18 12h4M4.93 19.07l5.66-5.66M13.41 10.59l5.66-5.66"/></svg>
+                  <span>✨ AI Enhance</span>
+                </button>
+              </div>
               <textarea class="form-input form-textarea" id="summary" rows="4" placeholder="A compelling 3-4 line overview of who you are and what you bring..."></textarea>
             </div>
           </div>
@@ -305,52 +366,103 @@
     <div class="modal-card">
       <div class="modal-header">
         <div class="modal-title-group">
-          <div class="modal-icon">⚡</div>
+          <div class="modal-icon-badge">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2v8M12 18v4M4.93 4.93l5.66 5.66M13.41 13.41l5.66 5.66M2 12h8M18 12h4M4.93 19.07l5.66-5.66M13.41 10.59l5.66-5.66"/>
+            </svg>
+          </div>
           <div>
-            <h3 class="modal-title">Smart Resume Parser & Import</h3>
-            <p class="modal-sub">Upload a resume file (.json, .txt, .md) or paste text to auto-fill your fields</p>
+            <div class="modal-title-row">
+              <h3 class="modal-title">AI Resume Import</h3>
+              <span class="ai-status-badge">⚡ Gemini 3.6</span>
+            </div>
+            <p class="modal-sub">Import from document or plain text</p>
           </div>
         </div>
-        <button class="modal-close" id="closeImportModal">✕</button>
+        <button class="modal-close" id="closeImportModal" title="Close Modal">✕</button>
+      </div>
+
+      <!-- AI Loading Overlay -->
+      <div class="ai-loading-overlay" id="aiLoadingOverlay" style="display:none;">
+        <div class="ai-loading-inner">
+          <div class="ai-spinner-container">
+            <div class="ai-spinner"></div>
+            <div class="ai-spinner-orb"></div>
+          </div>
+          <h4 class="ai-loading-title">AI Engine Parsing Resume…</h4>
+          <p class="ai-loading-sub">Extracting details and populating your resume state</p>
+          <div class="ai-loading-steps">
+            <span class="ai-step active">1. Clean Input</span>
+            <span class="ai-step active">2. AI Context Parse</span>
+            <span class="ai-step active">3. Map State</span>
+          </div>
+        </div>
       </div>
 
       <div class="modal-body">
+        <!-- Segmented Tab Bar -->
         <div class="import-tabs">
-          <button class="import-tab-btn active" id="tabBtnUpload" data-tab="upload">📁 Upload File</button>
-          <button class="import-tab-btn" id="tabBtnPaste" data-tab="paste">📋 Paste Resume Text</button>
+          <button class="import-tab-btn active" id="tabBtnUpload" data-tab="upload">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            <span>Upload Document</span>
+          </button>
+          <button class="import-tab-btn" id="tabBtnPaste" data-tab="paste">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>
+            <span>Paste Resume Text</span>
+          </button>
         </div>
 
         <!-- TAB 1: FILE UPLOAD -->
         <div class="import-tab-content active" id="importTabUpload">
           <div class="dropzone" id="fileDropzone">
-            <input type="file" id="resumeFileInput" accept=".json,.txt,.md,.text" style="display:none" />
-            <div class="dropzone-icon">📥</div>
-            <h4>Drag & Drop your Resume or JSON file here</h4>
-            <p>Supports <strong>.json</strong> (exported backups), <strong>.txt</strong>, or <strong>.md</strong> documents</p>
+            <input type="file" id="resumeFileInput" accept=".json,.txt,.md,.text,.pdf,.docx,.doc" style="display:none" />
+            <div class="dropzone-icon-wrap">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><polyline points="9 15 12 12 15 15"/></svg>
+            </div>
+            <h4>Drag & Drop your Resume</h4>
+            <div class="format-badges">
+              <span class="fmt-pill">PDF</span>
+              <span class="fmt-pill">DOCX</span>
+              <span class="fmt-pill">TXT</span>
+              <span class="fmt-pill">MD</span>
+              <span class="fmt-pill">JSON</span>
+            </div>
             <button class="btn-secondary-nav" id="browseFileBtn" type="button">Browse Files</button>
           </div>
         </div>
 
         <!-- TAB 2: PASTE TEXT -->
         <div class="import-tab-content" id="importTabPaste">
-          <label class="form-label" for="pasteResumeInput">Paste your Resume / LinkedIn text below:</label>
-          <textarea class="form-textarea import-textarea" id="pasteResumeInput" placeholder="Paste contact info, experience, education, and skills text here..."></textarea>
-          <div class="import-hint">💡 Our smart parser will extract name, email, phone, links, skills, work experience, and education automatically!</div>
+          <div class="textarea-header-row">
+            <label class="form-label" for="pasteResumeInput">Paste Resume Text</label>
+            <span class="char-count-badge" id="pasteCharCount">0 characters</span>
+          </div>
+          <textarea class="form-textarea import-textarea" id="pasteResumeInput" placeholder="Paste your resume content here (experience, skills, contact, education)..."></textarea>
+          <div class="paste-actions-row">
+            <button class="btn-sample-text" id="insertSampleTextBtn" type="button">⚡ Try Sample Text</button>
+          </div>
         </div>
       </div>
 
       <div class="modal-footer">
-        <button class="btn-secondary-nav" id="downloadBackupBtn" type="button" title="Save current form data as JSON backup file">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          <span>Backup JSON</span>
-        </button>
-        <button class="btn-primary" id="processImportBtn" type="button">
-          <span>Extract & Auto-Fill</span>
-        </button>
+        <div class="modal-footer-main">
+          <div class="ai-key-inline">
+            <span class="ai-key-status" id="aiKeyStatusBadge">Key Active</span>
+            <input type="password" id="aiApiKeyInput" class="ai-key-input" placeholder="OpenRouter Key (Optional)" autocomplete="off" />
+            <button class="ai-key-save-btn" id="saveAiKeyBtn" type="button">Save</button>
+          </div>
+          <div class="modal-footer-btns">
+            <button class="btn-primary btn-extract-primary" id="processImportBtn" type="button">
+              <span id="processImportBtnLabel">🤖 Extract with AI</span>
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

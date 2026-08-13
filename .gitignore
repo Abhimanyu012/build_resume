@@ -2,3 +2,5 @@
 .vscode/
 *.log
 node_modules/
+.env
+.env.*
