@@ -1,4 +1,4 @@
-# ⬡ RésuméForge — Editorial Resume Builder
+# ⬡ CraftResume — Editorial Resume Builder
 
 > Craft stunning, ATS-optimized, single-page A4 resumes in real-time with zero dependencies. Built with pure HTML5, CSS3, and JavaScript ES6+.
 
@@ -7,12 +7,12 @@
 ## 📸 Screenshots
 
 ### 💻 Desktop Editor & Real-Time A4 Live Preview
-![RésuméForge Desktop Preview](assets/desktop-preview.png)
+![CraftResume Desktop Preview](assets/desktop-preview.png)
 
 ---
 
 ### 📱 Mobile View & Responsive Layout Switcher
-![RésuméForge Mobile Preview](assets/mobile-preview.png)
+![CraftResume Mobile Preview](assets/mobile-preview.png)
 
 ---
 

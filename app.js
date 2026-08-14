@@ -1,6 +1,6 @@
-/* ═══════════════════════════════════════
-   RÉSUMÉ FORGE — APPLICATION LOGIC
-   ═══════════════════════════════════════ */
+/* ════════════════════════════════════════════════════════════════════════════
+   CRAFTRESUME — APPLICATION LOGIC
+   ════════════════════════════════════════════════════════════════════════════ */
 
 (function () {
   'use strict';
@@ -443,7 +443,7 @@
           <div class="empty-card">
             <div class="empty-header">
               <span class="empty-badge">Executive Resume Builder</span>
-              <h3 class="empty-title">Welcome to RésuméForge</h3>
+              <h3 class="empty-title">Welcome to CraftResume</h3>
               <p class="empty-sub">Create high-impact, ATS-optimized executive resumes in minutes with real-time preview and AI enhancement.</p>
             </div>
             
@@ -1112,7 +1112,7 @@ Return JSON strictly matching this schema:
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${key}`,
             'HTTP-Referer': window.location.origin || 'http://localhost:3000',
-            'X-Title': 'Resume Forge Fluff Corrector'
+            'X-Title': 'CraftResume Fluff Corrector'
           },
           body: JSON.stringify({
             model: model,
@@ -1307,7 +1307,7 @@ Return JSON strictly matching this schema:
   }
 
   // ── Persistence ──
-  const STORAGE_KEY = 'resumeforge_data';
+  const STORAGE_KEY = 'craftresume_data';
 
   function save() {
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) { /* quota */ }
@@ -1318,7 +1318,7 @@ Return JSON strictly matching this schema:
 
   function load() {
     try {
-      const raw = localStorage.getItem(STORAGE_KEY);
+      const raw = localStorage.getItem(STORAGE_KEY) || localStorage.getItem('resumeforge_data');
       if (!raw) {
         // First open / initial visit: show Welcome screen with guidance & API key notice by default
         resetForm(false);
@@ -2079,7 +2079,7 @@ CRITICAL WRITING DIRECTIVES:
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${key}`,
             'HTTP-Referer': window.location.origin || 'http://localhost:3000',
-            'X-Title': 'Resume Forge AI Enhancer'
+            'X-Title': 'CraftResume AI Enhancer'
           },
           body: JSON.stringify({
             model: model,
@@ -2194,7 +2194,7 @@ STRICT RULES:
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${apiKey}`,
             'HTTP-Referer': window.location.origin,
-            'X-Title': 'ResumeForge'
+            'X-Title': 'CraftResume'
           },
           body: JSON.stringify({
             model: model,
